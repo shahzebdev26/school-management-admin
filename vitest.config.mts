@@ -7,6 +7,7 @@ export default defineConfig({
     globals: false,
     setupFiles: ['./vitest.setup.mts'],
     include: ['src/**/*.test.{ts,tsx}'],
+    passWithNoTests: true,
     env: {
       API_ORIGIN: 'http://localhost:4000',
       NEXT_PUBLIC_APP_DOMAIN: 'techsparks.co',
