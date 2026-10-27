@@ -72,15 +72,12 @@ function useAdminColumns(sessionId: string | null): DataTableColumn<AdminListIte
     {
       id: 'status',
       header: 'Status',
-      cell: (row) => (
-        <StatusBadge tone={STATUS_TONE[row.status] ?? 'neutral'} label={row.status} />
-      ),
+      cell: (row) => <StatusBadge tone={STATUS_TONE[row.status] ?? 'neutral'} label={row.status} />,
     },
     {
       id: 'lastLogin',
       header: 'Last Login',
-      cell: (row) =>
-        row.lastLoginAt ? new Date(row.lastLoginAt).toLocaleString() : 'Never',
+      cell: (row) => (row.lastLoginAt ? new Date(row.lastLoginAt).toLocaleString() : 'Never'),
     },
     {
       id: 'actions',
@@ -123,7 +120,12 @@ function AdminDirectoryContent({
         getRowId={(row) => row.id}
         caption="Platform administrators"
       />
-      <Pagination page={page} limit={PAGE_SIZE} total={query.data.meta.total} onPageChange={onPageChange} />
+      <Pagination
+        page={page}
+        limit={PAGE_SIZE}
+        total={query.data.meta.total}
+        onPageChange={onPageChange}
+      />
     </>
   )
 }

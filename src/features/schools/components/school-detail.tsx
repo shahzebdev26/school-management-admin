@@ -17,7 +17,11 @@ import { useSchoolQuery } from '../api/use-school-query'
 import { useUpdateSchoolMutation } from '../api/use-update-school-mutation'
 import { useSuspendSchoolMutation } from '../api/use-suspend-school-mutation'
 import { useActivateSchoolMutation } from '../api/use-activate-school-mutation'
-import { updateSchoolSchema, type UpdateSchoolFormValues, type UpdateSchoolInput } from '../schemas/update-school-schema'
+import {
+  updateSchoolSchema,
+  type UpdateSchoolFormValues,
+  type UpdateSchoolInput,
+} from '../schemas/update-school-schema'
 import { ViewAsTrigger } from './view-as-trigger'
 
 const STATUS_TONE: Record<string, StatusTone> = {
@@ -69,12 +73,20 @@ function SchoolEditForm({
 
   const onSubmit = form.handleSubmit((values) => {
     updateMutation.mutate(values, {
-      onSuccess: () => { toast.success('School updated'); onDone() },
+      onSuccess: () => {
+        toast.success('School updated')
+        onDone()
+      },
     })
   })
 
   return (
-    <form onSubmit={(e) => { void onSubmit(e) }} className="flex flex-col gap-4">
+    <form
+      onSubmit={(e) => {
+        void onSubmit(e)
+      }}
+      className="flex flex-col gap-4"
+    >
       <TextField control={form.control} name="name" label="Name" required />
       <TextField control={form.control} name="contactPerson" label="Contact person" required />
       <PhoneField control={form.control} name="phone" required />
@@ -83,7 +95,15 @@ function SchoolEditForm({
         <Button type="submit" size="sm" disabled={updateMutation.isPending}>
           {updateMutation.isPending ? 'Saving…' : 'Save'}
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={() => { onDone(); form.reset() }}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            onDone()
+            form.reset()
+          }}
+        >
           Cancel
         </Button>
       </div>
@@ -102,11 +122,21 @@ function SchoolStatusSection({ school, id }: { school: SchoolData; id: string })
         <StatusBadge tone={STATUS_TONE[school.status] ?? 'neutral'} label={school.status} />
         {school.status === 'active' || school.status === 'trial' ? (
           <ConfirmDialog
-            trigger={<Button variant="destructive" size="sm">Suspend</Button>}
+            trigger={
+              <Button variant="destructive" size="sm">
+                Suspend
+              </Button>
+            }
             title={`Suspend ${school.name}?`}
             description="This school will lose access to the platform until reactivated."
             confirmLabel="Suspend"
-            onConfirm={() => { suspendMutation.mutate(undefined, { onSuccess: () => { toast.success('School suspended') } }) }}
+            onConfirm={() => {
+              suspendMutation.mutate(undefined, {
+                onSuccess: () => {
+                  toast.success('School suspended')
+                },
+              })
+            }}
             isPending={suspendMutation.isPending}
           />
         ) : null}
@@ -117,12 +147,68 @@ function SchoolStatusSection({ school, id }: { school: SchoolData; id: string })
             description="This school will regain access to the platform."
             confirmLabel="Activate"
             tone="default"
-            onConfirm={() => { activateMutation.mutate(undefined, { onSuccess: () => { toast.success('School activated') } }) }}
+            onConfirm={() => {
+              activateMutation.mutate(undefined, {
+                onSuccess: () => {
+                  toast.success('School activated')
+                },
+              })
+            }}
             isPending={activateMutation.isPending}
           />
         ) : null}
       </div>
     </section>
+  )
+}
+
+function SchoolDetailContent({
+  id,
+  school,
+  isEditing,
+  setIsEditing,
+}: {
+  id: string
+  school: SchoolData
+  isEditing: boolean
+  setIsEditing: (v: boolean) => void
+}) {
+  return (
+    <Screen
+      title={school.name}
+      description={`${school.slug} – ${school.type}`}
+      actions={<ViewAsTrigger schoolId={id} />}
+    >
+      <section className="flex max-w-lg flex-col gap-4 rounded-xl bg-card p-6 shadow-md">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-extrabold text-foreground">General Info</h2>
+          {isEditing ? null : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setIsEditing(true)
+              }}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
+        {isEditing ? (
+          <SchoolEditForm
+            id={id}
+            school={school}
+            onDone={() => {
+              setIsEditing(false)
+            }}
+          />
+        ) : (
+          <SchoolInfoDisplay school={school} />
+        )}
+      </section>
+      <Separator />
+      <SchoolStatusSection school={school} id={id} />
+    </Screen>
   )
 }
 
@@ -148,30 +234,21 @@ export function SchoolDetail({ id }: SchoolDetailProps) {
   if (query.isError) {
     return (
       <Screen title="School Details">
-        <ErrorState onRetry={() => { void query.refetch() }} />
+        <ErrorState
+          onRetry={() => {
+            void query.refetch()
+          }}
+        />
       </Screen>
     )
   }
 
-  const school = query.data
-
   return (
-    <Screen title={school.name} description={`${school.slug} – ${school.type}`} actions={<ViewAsTrigger schoolId={id} />}>
-      <section className="flex max-w-lg flex-col gap-4 rounded-xl bg-card p-6 shadow-md">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-foreground">General Info</h2>
-          {isEditing ? null : (
-            <Button variant="outline" size="sm" onClick={() => { setIsEditing(true) }}>Edit</Button>
-          )}
-        </div>
-        {isEditing ? (
-          <SchoolEditForm id={id} school={school} onDone={() => { setIsEditing(false) }} />
-        ) : (
-          <SchoolInfoDisplay school={school} />
-        )}
-      </section>
-      <Separator />
-      <SchoolStatusSection school={school} id={id} />
-    </Screen>
+    <SchoolDetailContent
+      id={id}
+      school={query.data}
+      isEditing={isEditing}
+      setIsEditing={setIsEditing}
+    />
   )
 }

@@ -115,7 +115,10 @@ const form = useForm<OnboardSchoolInput>({
 ```ts
 export const onboardSchoolSchema = z.object({
   name: z.string().min(1, 'School name is required').max(200),
-  subdomain: z.string().min(1, 'Subdomain is required').regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers, and hyphens only'),
+  subdomain: z
+    .string()
+    .min(1, 'Subdomain is required')
+    .regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers, and hyphens only'),
   adminName: z.string().min(1, 'Admin name is required'),
   adminPhone: z.string().regex(E164, 'Enter a valid phone number'),
 })

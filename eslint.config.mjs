@@ -17,8 +17,7 @@ const BAN_REACT_FC = {
 
 const BAN_HARDCODED_COLOUR = {
   selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
-  message:
-    'Hardcoded colours are banned (docs/styling.md). Use a semantic theme token.',
+  message: 'Hardcoded colours are banned (docs/styling.md). Use a semantic theme token.',
 }
 
 const BAN_PROCESS_ENV = {

@@ -48,7 +48,11 @@ export function AnalyticsDashboard() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Trial Schools" value={String(schoolsByStatus.trial)} icon={Building2} />
         <StatTile label="Active Schools" value={String(schoolsByStatus.active)} icon={Building2} />
-        <StatTile label="Suspended Schools" value={String(schoolsByStatus.suspended)} icon={Building2} />
+        <StatTile
+          label="Suspended Schools"
+          value={String(schoolsByStatus.suspended)}
+          icon={Building2}
+        />
         <StatTile label="Total Admins" value={String(totalAdmins)} icon={Shield} />
       </div>
 

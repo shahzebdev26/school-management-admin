@@ -9,9 +9,7 @@ export function useSuspendSchoolMutation(id: string) {
 
   return useMutation({
     mutationFn: async () => {
-      await unwrap(
-        apiClient.POST('/v1/schools/{id}/suspend', { params: { path: { id } } }),
-      )
+      await unwrap(apiClient.POST('/v1/schools/{id}/suspend', { params: { path: { id } } }))
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: schoolKeys.detail(id) })

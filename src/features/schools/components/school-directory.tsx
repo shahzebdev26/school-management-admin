@@ -88,7 +88,9 @@ function SchoolFilters({
         <SearchInput value={search} onValueChange={onSearchChange} label="Search schools" />
       </div>
       <Select value={status} onValueChange={onStatusChange}>
-        <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All statuses</SelectItem>
           <SelectItem value="active">Active</SelectItem>
@@ -97,7 +99,9 @@ function SchoolFilters({
         </SelectContent>
       </Select>
       <Select value={type} onValueChange={onTypeChange}>
-        <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All types</SelectItem>
           <SelectItem value="school">School</SelectItem>
@@ -121,18 +125,43 @@ function SchoolContent({
   onRowClick: (row: SchoolListItem) => void
 }) {
   if (query.isPending) return <DataTableSkeleton columnCount={6} rowCount={PAGE_SIZE} />
-  if (query.isError) return <ErrorState onRetry={() => { void query.refetch() }} />
+  if (query.isError)
+    return (
+      <ErrorState
+        onRetry={() => {
+          void query.refetch()
+        }}
+      />
+    )
   if (query.data.data.length === 0) {
     return (
-      <EmptyState icon={Building2} message="No schools found" hint="Add a school to get started"
-        action={<Button asChild size="sm"><Link href="/dashboard/schools/create">Add school</Link></Button>}
+      <EmptyState
+        icon={Building2}
+        message="No schools found"
+        hint="Add a school to get started"
+        action={
+          <Button asChild size="sm">
+            <Link href="/dashboard/schools/create">Add school</Link>
+          </Button>
+        }
       />
     )
   }
   return (
     <>
-      <DataTable rows={query.data.data} columns={COLUMNS} getRowId={(row) => row.id} caption="Schools directory" onRowClick={onRowClick} />
-      <Pagination page={page} limit={PAGE_SIZE} total={query.data.meta.total} onPageChange={onPageChange} />
+      <DataTable
+        rows={query.data.data}
+        columns={COLUMNS}
+        getRowId={(row) => row.id}
+        caption="Schools directory"
+        onRowClick={onRowClick}
+      />
+      <Pagination
+        page={page}
+        limit={PAGE_SIZE}
+        total={query.data.meta.total}
+        onPageChange={onPageChange}
+      />
     </>
   )
 }
@@ -155,7 +184,10 @@ export function SchoolDirectory() {
     ...(narrowedType ? { type: narrowedType } : {}),
   })
 
-  const resetPage = (setter: (v: string) => void) => (v: string) => { setter(v); setPage(1) }
+  const resetPage = (setter: (v: string) => void) => (v: string) => {
+    setter(v)
+    setPage(1)
+  }
 
   return (
     <Screen
@@ -163,18 +195,28 @@ export function SchoolDirectory() {
       description="Manage registered schools on the platform"
       actions={
         <Button asChild>
-          <Link href="/dashboard/schools/create"><Plus aria-hidden="true" />Add school</Link>
+          <Link href="/dashboard/schools/create">
+            <Plus aria-hidden="true" />
+            Add school
+          </Link>
         </Button>
       }
     >
       <SchoolFilters
-        search={search} onSearchChange={resetPage(setSearch)}
-        status={status} onStatusChange={resetPage(setStatus)}
-        type={type} onTypeChange={resetPage(setType)}
+        search={search}
+        onSearchChange={resetPage(setSearch)}
+        status={status}
+        onStatusChange={resetPage(setStatus)}
+        type={type}
+        onTypeChange={resetPage(setType)}
       />
       <SchoolContent
-        query={query} page={page} onPageChange={setPage}
-        onRowClick={(row) => { router.push(`/dashboard/schools/${row.id}`) }}
+        query={query}
+        page={page}
+        onPageChange={setPage}
+        onRowClick={(row) => {
+          router.push(`/dashboard/schools/${row.id}`)
+        }}
       />
     </Screen>
   )

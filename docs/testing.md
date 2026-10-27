@@ -4,15 +4,15 @@
 
 Test behaviour users depend on, not implementation detail.
 
-| Priority | Area                                                  | Why                                                             |
-| -------- | ----------------------------------------------------- | --------------------------------------------------------------- |
-| **High** | Forms — validation, submission, server error mapping  | School onboarding and admin management are form-heavy            |
-| **High** | The four data states — loading, empty, error, success | The most common UI defect is a missing error state              |
-| **High** | School directory filtering and pagination              | The primary screen; regressions are immediately visible         |
-| **High** | Permission-specific rendering                          | A junior admin must not see controls they cannot use            |
-| Medium   | Hooks with derived logic                              | ---                                                              |
-| Medium   | Shared components (`DataTable`, `StatTile`)           | Used everywhere; a regression is wide                           |
-| Low      | Thin presentational components                        | ---                                                              |
+| Priority | Area                                                  | Why                                                     |
+| -------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| **High** | Forms — validation, submission, server error mapping  | School onboarding and admin management are form-heavy   |
+| **High** | The four data states — loading, empty, error, success | The most common UI defect is a missing error state      |
+| **High** | School directory filtering and pagination             | The primary screen; regressions are immediately visible |
+| **High** | Permission-specific rendering                         | A junior admin must not see controls they cannot use    |
+| Medium   | Hooks with derived logic                              | ---                                                     |
+| Medium   | Shared components (`DataTable`, `StatTile`)           | Used everywhere; a regression is wide                   |
+| Low      | Thin presentational components                        | ---                                                     |
 
 Do **not** test: prop pass-through, styling, library behaviour, or that a component renders without crashing.
 
@@ -41,9 +41,7 @@ Mock at the HTTP boundary with MSW. Never mock TanStack Query, a query hook, or 
 ```ts
 // CORRECT — real hooks, real cache, real states
 server.use(
-  http.get('*/v1/schools', () =>
-    HttpResponse.json({ data: [{ id: '1', name: 'City School' }] }),
-  ),
+  http.get('*/v1/schools', () => HttpResponse.json({ data: [{ id: '1', name: 'City School' }] })),
 )
 
 // WRONG — the component is no longer being tested

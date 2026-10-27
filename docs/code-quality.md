@@ -142,18 +142,18 @@ If removing a comment would not confuse a careful reader, remove it.
 
 ## Naming
 
-| Thing                     | Convention                                | Example                                     |
-| ------------------------- | ----------------------------------------- | ------------------------------------------- |
-| Component files           | kebab-case                                | `school-card.tsx`                            |
-| Components                | PascalCase, matching the filename         | `SchoolCard`                                 |
-| Hooks                     | `use` prefix, camelCase                   | `useSchoolDirectory`                         |
-| Query/mutation hooks      | `use<Thing>Query` / `use<Action>Mutation` | `useSchoolsQuery`, `useOnboardSchoolMutation`|
-| Props interfaces          | `<Component>Props`                        | `SchoolCardProps`                            |
-| Event handlers (prop)     | `on<Event>`                               | `onSelect`, `onSubmit`                       |
-| Event handlers (internal) | `handle<Event>`                           | `handleSubmit`                               |
-| Booleans                  | `is` / `has` / `can` / `should`           | `isActive`, `canViewAs`                      |
-| True constants            | SCREAMING_SNAKE_CASE                      | `MAX_UPLOAD_BYTES`                           |
-| Zod schemas               | camelCase, `Schema` suffix                | `onboardSchoolSchema`                        |
+| Thing                     | Convention                                | Example                                       |
+| ------------------------- | ----------------------------------------- | --------------------------------------------- |
+| Component files           | kebab-case                                | `school-card.tsx`                             |
+| Components                | PascalCase, matching the filename         | `SchoolCard`                                  |
+| Hooks                     | `use` prefix, camelCase                   | `useSchoolDirectory`                          |
+| Query/mutation hooks      | `use<Thing>Query` / `use<Action>Mutation` | `useSchoolsQuery`, `useOnboardSchoolMutation` |
+| Props interfaces          | `<Component>Props`                        | `SchoolCardProps`                             |
+| Event handlers (prop)     | `on<Event>`                               | `onSelect`, `onSubmit`                        |
+| Event handlers (internal) | `handle<Event>`                           | `handleSubmit`                                |
+| Booleans                  | `is` / `has` / `can` / `should`           | `isActive`, `canViewAs`                       |
+| True constants            | SCREAMING_SNAKE_CASE                      | `MAX_UPLOAD_BYTES`                            |
+| Zod schemas               | camelCase, `Schema` suffix                | `onboardSchoolSchema`                         |
 
 Rules:
 

@@ -22,7 +22,8 @@ Hard limit is 150 lines. When a component grows, extract along these seams:
 ```tsx
 // CORRECT — screen composes, children render, hook decides
 export function SchoolDirectoryScreen() {
-  const { schools, filters, setFilters, pagination, isLoading, isError, refetch } = useSchoolDirectory()
+  const { schools, filters, setFilters, pagination, isLoading, isError, refetch } =
+    useSchoolDirectory()
 
   return (
     <Screen title="Schools">
@@ -129,28 +130,28 @@ Shared components are **copied** from `school-management-web`, not imported from
 
 ### Used in this dashboard
 
-| Component       | Purpose                                                    |
-| --------------- | ---------------------------------------------------------- |
-| `Screen`        | Page shell: title, description, actions                    |
-| `DataTable`     | Directory tables, audit log, analytics breakdowns          |
-| `StatTile`      | Dashboard metrics                                          |
-| `EmptyState`    | Every list screen                                          |
-| `ErrorState`    | Every data screen; distinguishes offline from failure      |
-| `ConfirmDialog` | Destructive actions (deactivate school, remove admin)      |
-| `SearchInput`   | Every list screen                                          |
-| `Pagination`    | Every list screen                                          |
-| `StatusBadge`   | School status, admin status                                |
-| `Toaster`       | Mounted once in the root layout                            |
-| `PersonAvatar`  | Admin list, audit log entries                              |
+| Component       | Purpose                                               |
+| --------------- | ----------------------------------------------------- |
+| `Screen`        | Page shell: title, description, actions               |
+| `DataTable`     | Directory tables, audit log, analytics breakdowns     |
+| `StatTile`      | Dashboard metrics                                     |
+| `EmptyState`    | Every list screen                                     |
+| `ErrorState`    | Every data screen; distinguishes offline from failure |
+| `ConfirmDialog` | Destructive actions (deactivate school, remove admin) |
+| `SearchInput`   | Every list screen                                     |
+| `Pagination`    | Every list screen                                     |
+| `StatusBadge`   | School status, admin status                           |
+| `Toaster`       | Mounted once in the root layout                       |
+| `PersonAvatar`  | Admin list, audit log entries                         |
 
 ### NOT used in this dashboard
 
-| Component             | Why                                                |
-| --------------------- | -------------------------------------------------- |
-| `ImpersonationBanner` | View-as hands off to school-management-web          |
+| Component             | Why                                                  |
+| --------------------- | ---------------------------------------------------- |
+| `ImpersonationBanner` | View-as hands off to school-management-web           |
 | `NotificationFeed`    | Admin dashboard has no chat-bubble notification feed |
-| `AttendanceBadge`     | Attendance is a school-level concern                |
-| `OtpInput`            | No OTP flow in the admin dashboard                  |
+| `AttendanceBadge`     | Attendance is a school-level concern                 |
+| `OtpInput`            | No OTP flow in the admin dashboard                   |
 
 Do not import or copy components from the "not used" list unless the product requires them.
 

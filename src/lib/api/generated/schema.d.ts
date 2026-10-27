@@ -4,3028 +4,3071 @@
  */
 
 export interface paths {
-    "/v1/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Sign in (school user: phone+password, platform admin: email+password)
-         * @description On a school subdomain this signs in a school user with phone+password; on admin.<domain> it signs in a platform admin with email+password.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        phone: string;
-                        password: string;
-                    } | {
-                        /** Format: email */
-                        email: string;
-                        password: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Signed in */
-                200: {
-                    headers: {
-                        /** @description HttpOnly session cookies, host-only, no Domain attribute */
-                        "Set-Cookie": string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                /** @enum {string} */
-                                portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                schoolId: string | null;
-                                permissions: ("session:read" | "students:read" | "platform:manage" | "audit:read" | "impersonation:start" | "branding:manage" | "notifications:send" | "notifications:read" | "push:manage" | "schools:manage" | "platform-admins:manage" | "analytics:read")[];
-                                impersonation: {
-                                    depth: 1 | 2;
-                                    realName: string;
-                                    viewingAs: {
-                                        name: string;
-                                        /** @enum {string} */
-                                        portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                    };
-                                } | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Too many attempts */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Rotate the refresh cookie and issue a new session */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description New session */
-                200: {
-                    headers: {
-                        /** @description HttpOnly session cookies, host-only, no Domain attribute */
-                        "Set-Cookie": string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                /** @enum {string} */
-                                portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                schoolId: string | null;
-                                permissions: ("session:read" | "students:read" | "platform:manage" | "audit:read" | "impersonation:start" | "branding:manage" | "notifications:send" | "notifications:read" | "push:manage" | "schools:manage" | "platform-admins:manage" | "analytics:read")[];
-                                impersonation: {
-                                    depth: 1 | 2;
-                                    realName: string;
-                                    viewingAs: {
-                                        name: string;
-                                        /** @enum {string} */
-                                        portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                    };
-                                } | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Too many attempts */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** End the session and revoke its refresh token */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Signed out; cookies are cleared */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The signed-in user */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The current user, portal and permissions */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                /** @enum {string} */
-                                portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                schoolId: string | null;
-                                permissions: ("session:read" | "students:read" | "platform:manage" | "audit:read" | "impersonation:start" | "branding:manage" | "notifications:send" | "notifications:read" | "push:manage" | "schools:manage" | "platform-admins:manage" | "analytics:read")[];
-                                impersonation: {
-                                    depth: 1 | 2;
-                                    realName: string;
-                                    viewingAs: {
-                                        name: string;
-                                        /** @enum {string} */
-                                        portal: "school_admin" | "teacher" | "parent" | "student" | "platform_admin";
-                                    };
-                                } | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/impersonations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Start viewing as a school or one of its users
-         * @description A platform admin views a school first, then a teacher, parent or student of it. A school admin views a teacher, parent or student of their own school. At most two hops. The session cookie is replaced; read /v1/auth/me for the new identity.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        type: "school";
-                        slug: string;
-                    } | {
-                        /** @enum {string} */
-                        type: "user";
-                        userId: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description View-as started; the access cookie is replaced */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/impersonations/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Stop viewing as the current identity
-         * @description Returns to the previous level: from a user back to the school view, or from the school view back to the signed-in admin.
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Returned; the access cookie is replaced */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Conflict with the current state */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/audit-logs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List audit log entries, newest first
-         * @description A school admin sees their own school. A platform admin on admin.<domain> sees every school.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    page?: number;
-                    limit?: number;
-                    actorUserId?: string;
-                    entityType?: string;
-                    entityId?: string;
-                    action?: string;
-                    schoolId?: string;
-                    from?: string | null;
-                    to?: string | null;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description A page of entries */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                action: string;
-                                entityType: string;
-                                entityId: string | null;
-                                schoolId: string | null;
-                                /** @enum {string|null} */
-                                actorKind: "school_user" | "platform_admin" | null;
-                                actorUserId: string | null;
-                                actingAsUserId: string | null;
-                                impersonationId: string | null;
-                                before?: unknown;
-                                after?: unknown;
-                                ip: string | null;
-                                userAgent: string | null;
-                                requestId: string | null;
-                                createdAt: string;
-                            }[];
-                            meta: {
-                                page: number;
-                                limit: number;
-                                total: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/branding/theme": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * The school's resolved theme, by subdomain
-         * @description Public: the tenant is resolved from the Host header, not a session.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The resolved branding theme */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                schoolName: string;
-                                address: string | null;
-                                brandColour: string | null;
-                                brandHue: number | null;
-                                brandChroma: number | null;
-                                logoUrl: string | null;
-                                faviconUrl: string | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/branding/logo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload the school's logo */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "multipart/form-data": {
-                        /**
-                         * Format: binary
-                         * @description PNG, JPEG, or WebP, up to 2MB
-                         */
-                        file: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description The resolved branding theme, with the new image applied */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                schoolName: string;
-                                address: string | null;
-                                brandColour: string | null;
-                                brandHue: number | null;
-                                brandChroma: number | null;
-                                logoUrl: string | null;
-                                faviconUrl: string | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/branding/favicon": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload the school's favicon */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "multipart/form-data": {
-                        /**
-                         * Format: binary
-                         * @description PNG, JPEG, or WebP, up to 2MB
-                         */
-                        file: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description The resolved branding theme, with the new image applied */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                schoolName: string;
-                                address: string | null;
-                                brandColour: string | null;
-                                brandHue: number | null;
-                                brandChroma: number | null;
-                                logoUrl: string | null;
-                                faviconUrl: string | null;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Send a notification to the whole school or all staff */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        title: string;
-                        body: string;
-                        category?: string;
-                        /** @enum {string} */
-                        audienceScope: "school" | "staff";
-                    };
-                };
-            };
-            responses: {
-                /** @description The send summary */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                attempted: number;
-                                succeeded: number;
-                                failed: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/notifications/feed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The signed-in user's notification feed, newest first */
-        get: {
-            parameters: {
-                query?: {
-                    page?: number;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description A page of notifications */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                senderUserId: string;
-                                title: string;
-                                body: string;
-                                category: string | null;
-                                /** @enum {string} */
-                                audienceScope: "school" | "staff";
-                                readAt: string | null;
-                                createdAt: string;
-                            }[];
-                            meta: {
-                                page: number;
-                                limit: number;
-                                total: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/notifications/unread-count": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The signed-in user's unread notification count */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The unread count */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                count: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/notifications/{id}/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Mark a notification as read for the signed-in user */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Marked read */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/push-subscriptions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Register this device for Web Push */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        /** Format: uri */
-                        endpoint: string;
-                        keys: {
-                            p256dh: string;
-                            auth: string;
-                        };
-                        userAgent?: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description The stored subscription id */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/push-subscriptions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Unregister a device from Web Push */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Removed */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/schools": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List schools with optional filters */
-        get: {
-            parameters: {
-                query?: {
-                    page?: number;
-                    limit?: number;
-                    status?: "trial" | "active" | "suspended";
-                    type?: "school" | "coaching" | "tuition";
-                    search?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description A page of schools */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                slug: string;
-                                type: string;
-                                status: string;
-                                contactPerson: string | null;
-                                phone: string | null;
-                                createdAt: string;
-                            }[];
-                            meta: {
-                                page: number;
-                                limit: number;
-                                total: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Create a school and its first admin user */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        name: string;
-                        slug: string;
-                        /** @enum {string} */
-                        type: "school" | "coaching" | "tuition";
-                        contactPerson?: string;
-                        phone?: string;
-                        address?: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description School created with admin credentials */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                school: {
-                                    id: string;
-                                    name: string;
-                                    slug: string;
-                                    type: string;
-                                    status: string;
-                                    contactPerson: string | null;
-                                    phone: string | null;
-                                    address: string | null;
-                                    branding: {
-                                        logoAssetId: string | null;
-                                        faviconAssetId: string | null;
-                                        brandColour: string | null;
-                                        brandHue: number | null;
-                                        brandChroma: number | null;
-                                    };
-                                    createdAt: string;
-                                    updatedAt: string;
-                                };
-                                adminCredentials: {
-                                    phone: string;
-                                    temporaryPassword: string;
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Conflict with the current state */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/schools/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a school by ID */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description School details */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                slug: string;
-                                type: string;
-                                status: string;
-                                contactPerson: string | null;
-                                phone: string | null;
-                                address: string | null;
-                                branding: {
-                                    logoAssetId: string | null;
-                                    faviconAssetId: string | null;
-                                    brandColour: string | null;
-                                    brandHue: number | null;
-                                    brandChroma: number | null;
-                                };
-                                createdAt: string;
-                                updatedAt: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update a school */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        name?: string;
-                        contactPerson?: string;
-                        phone?: string;
-                        address?: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Updated school */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                slug: string;
-                                type: string;
-                                status: string;
-                                contactPerson: string | null;
-                                phone: string | null;
-                                address: string | null;
-                                branding: {
-                                    logoAssetId: string | null;
-                                    faviconAssetId: string | null;
-                                    brandColour: string | null;
-                                    brandHue: number | null;
-                                    brandChroma: number | null;
-                                };
-                                createdAt: string;
-                                updatedAt: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/v1/schools/{id}/suspend": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Suspend a school */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description School suspended */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/schools/{id}/activate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Activate a school */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description School activated */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/platform-admins": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List platform admins */
-        get: {
-            parameters: {
-                query?: {
-                    page?: number;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description A page of platform admins */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                email: string;
-                                phone: string | null;
-                                status: string;
-                                lastLoginAt: string | null;
-                                createdAt: string;
-                            }[];
-                            meta: {
-                                page: number;
-                                limit: number;
-                                total: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Create a platform admin */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        name: string;
-                        /** Format: email */
-                        email: string;
-                        password: string;
-                        phone?: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Platform admin created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                email: string;
-                                phone: string | null;
-                                status: string;
-                                lastLoginAt: string | null;
-                                createdAt: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Conflict with the current state */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/platform-admins/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a platform admin by ID */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Platform admin details */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                email: string;
-                                phone: string | null;
-                                status: string;
-                                lastLoginAt: string | null;
-                                createdAt: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update a platform admin */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        name?: string;
-                        /** Format: email */
-                        email?: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Updated platform admin */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                id: string;
-                                name: string;
-                                email: string;
-                                phone: string | null;
-                                status: string;
-                                lastLoginAt: string | null;
-                                createdAt: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/v1/platform-admins/{id}/deactivate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Deactivate a platform admin */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Platform admin deactivated */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/view-as-tickets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Issue a view-as ticket for cross-origin handoff
-         * @description A platform admin requests a one-time ticket to view a school. The ticket is redeemed on the school subdomain to start the impersonation session there.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        schoolId: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Ticket issued */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                ticket: string;
-                                schoolSlug: string;
-                            };
-                        };
-                    };
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/view-as/claim": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Claim a view-as ticket on the school subdomain
-         * @description Redeems a one-time ticket and sets session cookies for the impersonation on the school subdomain. The ticket must match the school the request is on.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        ticket: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Claimed; session cookies are set */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Validation failed or the code is invalid */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Too many attempts */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/analytics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Platform analytics overview */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Counts by school status, school type, and total platform admins */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            data: {
-                                schoolsByStatus: {
-                                    trial: number;
-                                    active: number;
-                                    suspended: number;
-                                };
-                                schoolsByType: {
-                                    school: number;
-                                    coaching: number;
-                                    tuition: number;
-                                };
-                                totalAdmins: number;
-                            };
-                        };
-                    };
-                };
-                /** @description Not authenticated */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Not permitted, or the account or school is suspended */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            error: {
-                                code: string;
-                                message: string;
-                                requestId?: string;
-                                fieldErrors?: {
-                                    [key: string]: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+  '/v1/auth/login': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Sign in (school user: phone+password, platform admin: email+password)
+     * @description On a school subdomain this signs in a school user with phone+password; on admin.<domain> it signs in a platform admin with email+password.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json':
+            | {
+                phone: string
+                password: string
+              }
+            | {
+                /** Format: email */
+                email: string
+                password: string
+              }
+        }
+      }
+      responses: {
+        /** @description Signed in */
+        200: {
+          headers: {
+            /** @description HttpOnly session cookies, host-only, no Domain attribute */
+            'Set-Cookie': string
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                schoolId: string | null
+                permissions: (
+                  | 'session:read'
+                  | 'students:read'
+                  | 'platform:manage'
+                  | 'audit:read'
+                  | 'impersonation:start'
+                  | 'branding:manage'
+                  | 'notifications:send'
+                  | 'notifications:read'
+                  | 'push:manage'
+                  | 'schools:manage'
+                  | 'platform-admins:manage'
+                  | 'analytics:read'
+                )[]
+                impersonation: {
+                  depth: 1 | 2
+                  realName: string
+                  viewingAs: {
+                    name: string
+                    /** @enum {string} */
+                    portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                  }
+                } | null
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Too many attempts */
+        429: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/auth/refresh': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Rotate the refresh cookie and issue a new session */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description New session */
+        200: {
+          headers: {
+            /** @description HttpOnly session cookies, host-only, no Domain attribute */
+            'Set-Cookie': string
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                schoolId: string | null
+                permissions: (
+                  | 'session:read'
+                  | 'students:read'
+                  | 'platform:manage'
+                  | 'audit:read'
+                  | 'impersonation:start'
+                  | 'branding:manage'
+                  | 'notifications:send'
+                  | 'notifications:read'
+                  | 'push:manage'
+                  | 'schools:manage'
+                  | 'platform-admins:manage'
+                  | 'analytics:read'
+                )[]
+                impersonation: {
+                  depth: 1 | 2
+                  realName: string
+                  viewingAs: {
+                    name: string
+                    /** @enum {string} */
+                    portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                  }
+                } | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Too many attempts */
+        429: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/auth/logout': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** End the session and revoke its refresh token */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Signed out; cookies are cleared */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/auth/me': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The signed-in user */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The current user, portal and permissions */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                schoolId: string | null
+                permissions: (
+                  | 'session:read'
+                  | 'students:read'
+                  | 'platform:manage'
+                  | 'audit:read'
+                  | 'impersonation:start'
+                  | 'branding:manage'
+                  | 'notifications:send'
+                  | 'notifications:read'
+                  | 'push:manage'
+                  | 'schools:manage'
+                  | 'platform-admins:manage'
+                  | 'analytics:read'
+                )[]
+                impersonation: {
+                  depth: 1 | 2
+                  realName: string
+                  viewingAs: {
+                    name: string
+                    /** @enum {string} */
+                    portal: 'school_admin' | 'teacher' | 'parent' | 'student' | 'platform_admin'
+                  }
+                } | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/impersonations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Start viewing as a school or one of its users
+     * @description A platform admin views a school first, then a teacher, parent or student of it. A school admin views a teacher, parent or student of their own school. At most two hops. The session cookie is replaced; read /v1/auth/me for the new identity.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json':
+            | {
+                /** @enum {string} */
+                type: 'school'
+                slug: string
+              }
+            | {
+                /** @enum {string} */
+                type: 'user'
+                userId: string
+              }
+        }
+      }
+      responses: {
+        /** @description View-as started; the access cookie is replaced */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/impersonations/current': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /**
+     * Stop viewing as the current identity
+     * @description Returns to the previous level: from a user back to the school view, or from the school view back to the signed-in admin.
+     */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Returned; the access cookie is replaced */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/audit-logs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List audit log entries, newest first
+     * @description A school admin sees their own school. A platform admin on admin.<domain> sees every school.
+     */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+          actorUserId?: string
+          entityType?: string
+          entityId?: string
+          action?: string
+          schoolId?: string
+          from?: string | null
+          to?: string | null
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of entries */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                action: string
+                entityType: string
+                entityId: string | null
+                schoolId: string | null
+                /** @enum {string|null} */
+                actorKind: 'school_user' | 'platform_admin' | null
+                actorUserId: string | null
+                actingAsUserId: string | null
+                impersonationId: string | null
+                before?: unknown
+                after?: unknown
+                ip: string | null
+                userAgent: string | null
+                requestId: string | null
+                createdAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branding/theme': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The school's resolved theme, by subdomain
+     * @description Public: the tenant is resolved from the Host header, not a session.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The resolved branding theme */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                schoolName: string
+                address: string | null
+                brandColour: string | null
+                brandHue: number | null
+                brandChroma: number | null
+                logoUrl: string | null
+                faviconUrl: string | null
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branding/logo': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Upload the school's logo */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            /**
+             * Format: binary
+             * @description PNG, JPEG, or WebP, up to 2MB
+             */
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description The resolved branding theme, with the new image applied */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                schoolName: string
+                address: string | null
+                brandColour: string | null
+                brandHue: number | null
+                brandChroma: number | null
+                logoUrl: string | null
+                faviconUrl: string | null
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branding/favicon': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Upload the school's favicon */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            /**
+             * Format: binary
+             * @description PNG, JPEG, or WebP, up to 2MB
+             */
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description The resolved branding theme, with the new image applied */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                schoolName: string
+                address: string | null
+                brandColour: string | null
+                brandHue: number | null
+                brandChroma: number | null
+                logoUrl: string | null
+                faviconUrl: string | null
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Send a notification to the whole school or all staff */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            title: string
+            body: string
+            category?: string
+            /** @enum {string} */
+            audienceScope: 'school' | 'staff'
+          }
+        }
+      }
+      responses: {
+        /** @description The send summary */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                attempted: number
+                succeeded: number
+                failed: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/feed': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The signed-in user's notification feed, newest first */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of notifications */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                senderUserId: string
+                title: string
+                body: string
+                category: string | null
+                /** @enum {string} */
+                audienceScope: 'school' | 'staff'
+                readAt: string | null
+                createdAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/unread-count': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The signed-in user's unread notification count */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The unread count */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                count: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/{id}/read': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Mark a notification as read for the signed-in user */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Marked read */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/push-subscriptions': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Register this device for Web Push */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** Format: uri */
+            endpoint: string
+            keys: {
+              p256dh: string
+              auth: string
+            }
+            userAgent?: string
+          }
+        }
+      }
+      responses: {
+        /** @description The stored subscription id */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/push-subscriptions/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Unregister a device from Web Push */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/schools': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List schools with optional filters */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+          status?: 'trial' | 'active' | 'suspended'
+          type?: 'school' | 'coaching' | 'tuition'
+          search?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of schools */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                slug: string
+                type: string
+                status: string
+                contactPerson: string | null
+                phone: string | null
+                createdAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a school and its first admin user */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            name: string
+            slug: string
+            /** @enum {string} */
+            type: 'school' | 'coaching' | 'tuition'
+            contactPerson?: string
+            phone?: string
+            address?: string
+          }
+        }
+      }
+      responses: {
+        /** @description School created with admin credentials */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                school: {
+                  id: string
+                  name: string
+                  slug: string
+                  type: string
+                  status: string
+                  contactPerson: string | null
+                  phone: string | null
+                  address: string | null
+                  branding: {
+                    logoAssetId: string | null
+                    faviconAssetId: string | null
+                    brandColour: string | null
+                    brandHue: number | null
+                    brandChroma: number | null
+                  }
+                  createdAt: string
+                  updatedAt: string
+                }
+                adminCredentials: {
+                  phone: string
+                  temporaryPassword: string
+                }
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/schools/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a school by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description School details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                slug: string
+                type: string
+                status: string
+                contactPerson: string | null
+                phone: string | null
+                address: string | null
+                branding: {
+                  logoAssetId: string | null
+                  faviconAssetId: string | null
+                  brandColour: string | null
+                  brandHue: number | null
+                  brandChroma: number | null
+                }
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a school */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            name?: string
+            contactPerson?: string
+            phone?: string
+            address?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Updated school */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                slug: string
+                type: string
+                status: string
+                contactPerson: string | null
+                phone: string | null
+                address: string | null
+                branding: {
+                  logoAssetId: string | null
+                  faviconAssetId: string | null
+                  brandColour: string | null
+                  brandHue: number | null
+                  brandChroma: number | null
+                }
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/schools/{id}/suspend': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Suspend a school */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description School suspended */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/schools/{id}/activate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Activate a school */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description School activated */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/platform-admins': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List platform admins */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of platform admins */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                email: string
+                phone: string | null
+                status: string
+                lastLoginAt: string | null
+                createdAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a platform admin */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            name: string
+            /** Format: email */
+            email: string
+            password: string
+            phone?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Platform admin created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                email: string
+                phone: string | null
+                status: string
+                lastLoginAt: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/platform-admins/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a platform admin by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Platform admin details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                email: string
+                phone: string | null
+                status: string
+                lastLoginAt: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a platform admin */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            name?: string
+            /** Format: email */
+            email?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Updated platform admin */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                email: string
+                phone: string | null
+                status: string
+                lastLoginAt: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/platform-admins/{id}/deactivate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Deactivate a platform admin */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Platform admin deactivated */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/view-as-tickets': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Issue a view-as ticket for cross-origin handoff
+     * @description A platform admin requests a one-time ticket to view a school. The ticket is redeemed on the school subdomain to start the impersonation session there.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            schoolId: string
+          }
+        }
+      }
+      responses: {
+        /** @description Ticket issued */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                ticket: string
+                schoolSlug: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/view-as/claim': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Claim a view-as ticket on the school subdomain
+     * @description Redeems a one-time ticket and sets session cookies for the impersonation on the school subdomain. The ticket must match the school the request is on.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': {
+            ticket: string
+          }
+        }
+      }
+      responses: {
+        /** @description Claimed; session cookies are set */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Too many attempts */
+        429: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/analytics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Platform analytics overview */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Counts by school status, school type, and total platform admins */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                schoolsByStatus: {
+                  trial: number
+                  active: number
+                  suspended: number
+                }
+                schoolsByType: {
+                  school: number
+                  coaching: number
+                  tuition: number
+                }
+                totalAdmins: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 export interface components {
-    schemas: never;
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+  schemas: never
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
-export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export type $defs = Record<string, never>
+export type operations = Record<string, never>

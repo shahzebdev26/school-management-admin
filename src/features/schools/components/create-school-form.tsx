@@ -122,35 +122,87 @@ function useSchoolFormSubmit(opts: {
   })
 }
 
+function SchoolFormFields({
+  form,
+  formError,
+  onSubmit,
+  isPending,
+}: {
+  form: ReturnType<typeof useForm<CreateSchoolFormValues, unknown, CreateSchoolInput>>
+  formError: string | null
+  onSubmit: ReturnType<typeof useSchoolFormSubmit>
+  isPending: boolean
+}) {
+  return (
+    <form
+      onSubmit={(event) => {
+        void onSubmit(event)
+      }}
+      className="flex max-w-lg flex-col gap-5"
+    >
+      {formError ? (
+        <p role="alert" className="text-sm font-medium text-destructive">
+          {formError}
+        </p>
+      ) : null}
+      <TextField control={form.control} name="name" label="School name" required />
+      <TextField
+        control={form.control}
+        name="slug"
+        label="Slug"
+        description="Used as the subdomain, e.g. my-school.techsparks.app"
+        required
+      />
+      <SelectField
+        control={form.control}
+        name="type"
+        label="Type"
+        options={TYPE_OPTIONS}
+        required
+      />
+      <TextField control={form.control} name="contactPerson" label="Contact person" required />
+      <PhoneField control={form.control} name="phone" required />
+      <TextField control={form.control} name="address" label="Address" required />
+      <Button type="submit" disabled={isPending} className="w-fit">
+        {isPending ? 'Creating…' : 'Create school'}
+      </Button>
+    </form>
+  )
+}
+
 export function CreateSchoolForm() {
   const mutation = useCreateSchoolMutation()
   const [formError, setFormError] = useState<string | null>(null)
   const [credentials, setCredentials] = useState<Credentials | null>(null)
   const form = useForm<CreateSchoolFormValues, unknown, CreateSchoolInput>({
     resolver: zodResolver(createSchoolSchema),
-    defaultValues: { name: '', slug: '', type: 'school', contactPerson: '', phone: '', address: '' },
+    defaultValues: {
+      name: '',
+      slug: '',
+      type: 'school',
+      contactPerson: '',
+      phone: '',
+      address: '',
+    },
   })
   const onSubmit = useSchoolFormSubmit({ form, mutation, setFormError, setCredentials })
 
   return (
     <Screen title="Add School" description="Register a new school on the platform">
       {credentials ? (
-        <CredentialsDialog credentials={credentials} onClose={() => { setCredentials(null) }} />
+        <CredentialsDialog
+          credentials={credentials}
+          onClose={() => {
+            setCredentials(null)
+          }}
+        />
       ) : null}
-      <form onSubmit={(event) => { void onSubmit(event) }} className="flex max-w-lg flex-col gap-5">
-        {formError ? (
-          <p role="alert" className="text-sm font-medium text-destructive">{formError}</p>
-        ) : null}
-        <TextField control={form.control} name="name" label="School name" required />
-        <TextField control={form.control} name="slug" label="Slug" description="Used as the subdomain, e.g. my-school.techsparks.app" required />
-        <SelectField control={form.control} name="type" label="Type" options={TYPE_OPTIONS} required />
-        <TextField control={form.control} name="contactPerson" label="Contact person" required />
-        <PhoneField control={form.control} name="phone" required />
-        <TextField control={form.control} name="address" label="Address" required />
-        <Button type="submit" disabled={mutation.isPending} className="w-fit">
-          {mutation.isPending ? 'Creating…' : 'Create school'}
-        </Button>
-      </form>
+      <SchoolFormFields
+        form={form}
+        formError={formError}
+        onSubmit={onSubmit}
+        isPending={mutation.isPending}
+      />
     </Screen>
   )
 }

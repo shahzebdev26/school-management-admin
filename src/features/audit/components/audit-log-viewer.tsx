@@ -62,7 +62,9 @@ function AuditFilters({
         <SearchInput value={search} onValueChange={onSearchChange} label="Search audit logs" />
       </div>
       <Select value={action} onValueChange={onActionChange}>
-        <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All actions</SelectItem>
           <SelectItem value="create">Create</SelectItem>
@@ -73,7 +75,9 @@ function AuditFilters({
         </SelectContent>
       </Select>
       <Select value={entityType} onValueChange={onEntityTypeChange}>
-        <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All entities</SelectItem>
           <SelectItem value="school">School</SelectItem>
@@ -95,14 +99,37 @@ function AuditContent({
   onPageChange: (p: number) => void
 }) {
   if (query.isPending) return <DataTableSkeleton columnCount={7} rowCount={PAGE_SIZE} />
-  if (query.isError) return <ErrorState onRetry={() => { void query.refetch() }} />
+  if (query.isError)
+    return (
+      <ErrorState
+        onRetry={() => {
+          void query.refetch()
+        }}
+      />
+    )
   if (query.data.data.length === 0) {
-    return <EmptyState icon={ScrollText} message="No audit logs found" hint="Activity will appear here" />
+    return (
+      <EmptyState
+        icon={ScrollText}
+        message="No audit logs found"
+        hint="Activity will appear here"
+      />
+    )
   }
   return (
     <>
-      <DataTable rows={query.data.data} columns={COLUMNS} getRowId={(row) => row.id} caption="Audit log entries" />
-      <Pagination page={page} limit={PAGE_SIZE} total={query.data.meta.total} onPageChange={onPageChange} />
+      <DataTable
+        rows={query.data.data}
+        columns={COLUMNS}
+        getRowId={(row) => row.id}
+        caption="Audit log entries"
+      />
+      <Pagination
+        page={page}
+        limit={PAGE_SIZE}
+        total={query.data.meta.total}
+        onPageChange={onPageChange}
+      />
     </>
   )
 }
@@ -121,14 +148,20 @@ export function AuditLogViewer() {
     ...(entityType !== 'all' ? { entityType } : {}),
   })
 
-  const resetPage = (setter: (v: string) => void) => (v: string) => { setter(v); setPage(1) }
+  const resetPage = (setter: (v: string) => void) => (v: string) => {
+    setter(v)
+    setPage(1)
+  }
 
   return (
     <Screen title="Audit Log" description="Platform activity history">
       <AuditFilters
-        search={search} onSearchChange={resetPage(setSearch)}
-        action={action} onActionChange={resetPage(setAction)}
-        entityType={entityType} onEntityTypeChange={resetPage(setEntityType)}
+        search={search}
+        onSearchChange={resetPage(setSearch)}
+        action={action}
+        onActionChange={resetPage(setAction)}
+        entityType={entityType}
+        onEntityTypeChange={resetPage(setEntityType)}
       />
       <AuditContent query={query} page={page} onPageChange={setPage} />
     </Screen>

@@ -27,11 +27,7 @@ const brandTokens: CSSWithCustomProps = { '--brand-h': '200', '--brand-c': '0.16
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html
-      lang="en"
-      className={jakarta.variable}
-      style={brandTokens}
-    >
+    <html lang="en" className={jakarta.variable} style={brandTokens}>
       <body>
         <QueryProvider>
           <TooltipProvider>{children}</TooltipProvider>

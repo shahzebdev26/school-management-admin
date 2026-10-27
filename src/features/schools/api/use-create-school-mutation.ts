@@ -5,8 +5,7 @@ import { apiClient, unwrap } from '@/lib/api/client'
 import type { paths } from '@/lib/api/generated/schema'
 import { schoolKeys } from './school-keys'
 
-type CreateSchoolBody =
-  paths['/v1/schools']['post']['requestBody']['content']['application/json']
+type CreateSchoolBody = paths['/v1/schools']['post']['requestBody']['content']['application/json']
 
 export type CreateSchoolResult =
   paths['/v1/schools']['post']['responses'][201]['content']['application/json']['data']

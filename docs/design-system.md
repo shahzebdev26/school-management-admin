@@ -33,8 +33,8 @@ The same OKLCH-based token ramp used in `school-management-web`, but with fixed 
 
 Page, text, muted text, borders and control edges all carry the platform hue at a small fraction of the brand chroma, identical to the `school-management-web` system:
 
-| Token                    | Lightness | Chroma (x brand chroma)          |
-| ------------------------ | --------- | -------------------------------- |
+| Token                    | Lightness | Chroma (x brand chroma)         |
+| ------------------------ | --------- | ------------------------------- |
 | `--background`           | 0.965     | x 0.09 (= 0.014 at the default) |
 | `--foreground`           | 0.22      | x 0.19 (= 0.03)                 |
 | `--muted-foreground`     | 0.45      | x 0.19                          |
@@ -166,10 +166,10 @@ Inputs, table rows and badges never carry a drop shadow.
 
 Row heights:
 
-| Situation                                                      | Row height                            |
-| -------------------------------------------------------------- | ------------------------------------- |
-| The **row itself** is tappable (school list, admin list)       | **48px** mobile / 40px desktop        |
-| The row is **data** and controls inside it are the targets     | **52px**, each control a >=42px target |
+| Situation                                                  | Row height                             |
+| ---------------------------------------------------------- | -------------------------------------- |
+| The **row itself** is tappable (school list, admin list)   | **48px** mobile / 40px desktop         |
+| The row is **data** and controls inside it are the targets | **52px**, each control a >=42px target |
 
 ---
 
@@ -181,9 +181,9 @@ How the shared look is built. All of it uses tokens; none uses a colour literal.
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | Primary button     | `bg-linear-to-b from-primary to-primary-strong text-primary-foreground shadow-glow`, hover `brightness-110`           |
 | Secondary button   | `bg-accent text-accent-foreground`                                                                                    |
-| Outline button     | `border-[1.5px] border-input bg-card`                                                                                |
+| Outline button     | `border-[1.5px] border-input bg-card`                                                                                 |
 | Destructive button | `bg-destructive text-destructive-foreground`                                                                          |
-| Input              | `h-[52px] rounded-lg border-[1.5px] border-input bg-background`; focus: `bg-card` only; invalid: `border-destructive`|
+| Input              | `h-[52px] rounded-lg border-[1.5px] border-input bg-background`; focus: `bg-card` only; invalid: `border-destructive` |
 | Card               | `rounded-xl bg-card shadow-md`                                                                                        |
 | Soft icon bubble   | `rounded-full bg-accent text-accent-foreground`                                                                       |
 | Badge / status     | `rounded-full`, solid `*-bg` fill with `*-text`, always an icon and a label                                           |
@@ -207,14 +207,14 @@ Every data screen handles **loading, empty, error, success**. Non-negotiable; se
 
 In `src/components/shared/`. Check here before building anything similar — duplicating a directory table is a defect.
 
-| Component       | Purpose                                                    |
-| --------------- | ---------------------------------------------------------- |
-| `Screen`        | Page shell: title, description, actions                    |
-| `DataTable`     | Directory tables, audit log, analytics breakdowns          |
-| `EmptyState`    | Says what is absent and how to populate it                 |
-| `ErrorState`    | Distinguishes offline from failure; offers retry           |
-| `StatusBadge`   | Status with icon **and** label, never colour alone         |
-| `StatTile`      | Dashboard metrics with label, value, and optional trend    |
+| Component     | Purpose                                                 |
+| ------------- | ------------------------------------------------------- |
+| `Screen`      | Page shell: title, description, actions                 |
+| `DataTable`   | Directory tables, audit log, analytics breakdowns       |
+| `EmptyState`  | Says what is absent and how to populate it              |
+| `ErrorState`  | Distinguishes offline from failure; offers retry        |
+| `StatusBadge` | Status with icon **and** label, never colour alone      |
+| `StatTile`    | Dashboard metrics with label, value, and optional trend |
 
 ### Do not mark shared components `'use client'`
 

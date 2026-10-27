@@ -22,7 +22,13 @@ interface AppShellProps {
   children: ReactNode
 }
 
-function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: (() => void) | undefined }) {
+function NavLinks({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string
+  onNavigate?: (() => void) | undefined
+}) {
   return (
     <nav className="flex flex-col gap-1">
       {NAV_ITEMS.map((item) => {

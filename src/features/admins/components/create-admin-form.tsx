@@ -19,10 +19,7 @@ import {
 } from '@/components/ui/dialog'
 import { ApiError } from '@/lib/api/errors'
 import { useCreateAdminMutation } from '../api/use-create-admin-mutation'
-import {
-  createAdminSchema,
-  type CreateAdminFormValues,
-} from '../schemas/create-admin-schema'
+import { createAdminSchema, type CreateAdminFormValues } from '../schemas/create-admin-schema'
 
 const KNOWN_FIELDS = ['name', 'email', 'password'] as const
 
@@ -123,15 +120,41 @@ export function CreateAdminForm() {
   return (
     <Screen title="Add Admin" description="Create a new platform administrator">
       {credentials ? (
-        <CredentialsDialog credentials={credentials} onClose={() => { setCredentials(null) }} />
+        <CredentialsDialog
+          credentials={credentials}
+          onClose={() => {
+            setCredentials(null)
+          }}
+        />
       ) : null}
-      <form onSubmit={(event) => { void onSubmit(event) }} className="flex max-w-lg flex-col gap-5">
+      <form
+        onSubmit={(event) => {
+          void onSubmit(event)
+        }}
+        className="flex max-w-lg flex-col gap-5"
+      >
         {formError ? (
-          <p role="alert" className="text-sm font-medium text-destructive">{formError}</p>
+          <p role="alert" className="text-sm font-medium text-destructive">
+            {formError}
+          </p>
         ) : null}
         <TextField control={form.control} name="name" label="Full name" required />
-        <TextField control={form.control} name="email" label="Email" type="email" autoComplete="email" required />
-        <TextField control={form.control} name="password" label="Password" type="password" description="Minimum 10 characters" required />
+        <TextField
+          control={form.control}
+          name="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+        />
+        <TextField
+          control={form.control}
+          name="password"
+          label="Password"
+          type="password"
+          description="Minimum 10 characters"
+          required
+        />
         <Button type="submit" disabled={mutation.isPending} className="w-fit">
           {mutation.isPending ? 'Creating…' : 'Create admin'}
         </Button>
