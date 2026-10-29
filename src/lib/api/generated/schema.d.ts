@@ -82,6 +82,13 @@ export interface paths {
                   | 'audit:read'
                   | 'impersonation:start'
                   | 'branding:manage'
+                  | 'storage:manage'
+                  | 'assignments:read'
+                  | 'assignments:manage'
+                  | 'assignments:submit'
+                  | 'assignments:grade'
+                  | 'study-material:read'
+                  | 'study-material:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -274,6 +281,13 @@ export interface paths {
                   | 'audit:read'
                   | 'impersonation:start'
                   | 'branding:manage'
+                  | 'storage:manage'
+                  | 'assignments:read'
+                  | 'assignments:manage'
+                  | 'assignments:submit'
+                  | 'assignments:grade'
+                  | 'study-material:read'
+                  | 'study-material:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -460,6 +474,13 @@ export interface paths {
                   | 'audit:read'
                   | 'impersonation:start'
                   | 'branding:manage'
+                  | 'storage:manage'
+                  | 'assignments:read'
+                  | 'assignments:manage'
+                  | 'assignments:submit'
+                  | 'assignments:grade'
+                  | 'study-material:read'
+                  | 'study-material:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -772,6 +793,7 @@ export interface paths {
           entityType?: string
           entityId?: string
           action?: string
+          search?: string
           schoolId?: string
           from?: string | null
           to?: string | null
@@ -1299,7 +1321,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Send a notification to the whole school or all staff */
+    /**
+     * Send a notification to the whole school, all staff, or one class
+     * @description Scope 'class' requires audienceClassId and reaches that class's students plus the guardians linked to them, de-duplicated. Anyone without a login is skipped, so a class where nobody has an account yet reaches nobody rather than failing. Omitting the class is refused rather than falling back to the whole school.
+     */
     post: {
       parameters: {
         query?: never
@@ -1314,7 +1339,8 @@ export interface paths {
             body: string
             category?: string
             /** @enum {string} */
-            audienceScope: 'school' | 'staff'
+            audienceScope: 'school' | 'staff' | 'class'
+            audienceClassId?: string
           }
         }
       }
@@ -1431,7 +1457,7 @@ export interface paths {
                 body: string
                 category: string | null
                 /** @enum {string} */
-                audienceScope: 'school' | 'staff'
+                audienceScope: 'school' | 'staff' | 'class'
                 readAt: string | null
                 createdAt: string
               }[]
@@ -1815,6 +1841,7 @@ export interface paths {
                 slug: string
                 type: string
                 status: string
+                usesPlatformStorage: boolean
                 contactPerson: string | null
                 phone: string | null
                 createdAt: string
@@ -1920,6 +1947,7 @@ export interface paths {
                   slug: string
                   type: string
                   status: string
+                  usesPlatformStorage: boolean
                   contactPerson: string | null
                   phone: string | null
                   address: string | null
@@ -2053,6 +2081,7 @@ export interface paths {
                 slug: string
                 type: string
                 status: string
+                usesPlatformStorage: boolean
                 contactPerson: string | null
                 phone: string | null
                 address: string | null
@@ -2147,6 +2176,7 @@ export interface paths {
             contactPerson?: string
             phone?: string
             address?: string
+            usesPlatformStorage?: boolean
           }
         }
       }
@@ -2164,6 +2194,7 @@ export interface paths {
                 slug: string
                 type: string
                 status: string
+                usesPlatformStorage: boolean
                 contactPerson: string | null
                 phone: string | null
                 address: string | null
@@ -5651,6 +5682,13 @@ export interface paths {
               | 'audit:read'
               | 'impersonation:start'
               | 'branding:manage'
+              | 'storage:manage'
+              | 'assignments:read'
+              | 'assignments:manage'
+              | 'assignments:submit'
+              | 'assignments:grade'
+              | 'study-material:read'
+              | 'study-material:manage'
               | 'notifications:send'
               | 'notifications:read'
               | 'push:manage'
@@ -6008,6 +6046,13 @@ export interface paths {
               | 'audit:read'
               | 'impersonation:start'
               | 'branding:manage'
+              | 'storage:manage'
+              | 'assignments:read'
+              | 'assignments:manage'
+              | 'assignments:submit'
+              | 'assignments:grade'
+              | 'study-material:read'
+              | 'study-material:manage'
               | 'notifications:send'
               | 'notifications:read'
               | 'push:manage'
@@ -11343,6 +11388,2715 @@ export interface paths {
     options?: never
     head?: never
     patch?: never
+    trace?: never
+  }
+  '/v1/storage-settings': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The school's own file storage account; the API secret is never returned
+     * @description A school that has not configured storage is a normal state, reported as isConfigured: false rather than a 404.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Storage configuration */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                isConfigured: boolean
+                settings: {
+                  cloudName: string
+                  apiKey: string
+                  hasApiSecret: boolean
+                  verifiedAt: string | null
+                  updatedAt: string
+                } | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /**
+     * Save the school's Cloudinary credentials
+     * @description Files upload to the school’s own account and the bill is theirs, so there is no storage quota. The secret is encrypted at rest and never returned; saving clears any previous verification.
+     */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            cloudName: string
+            apiKey: string
+            apiSecret: string
+          }
+        }
+      }
+      responses: {
+        /** @description Credentials saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                cloudName: string
+                apiKey: string
+                hasApiSecret: boolean
+                verifiedAt: string | null
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    /** Remove the stored credentials; uploads are refused until new ones are saved */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Credentials removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/storage-settings/verification': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Check the stored credentials against Cloudinary
+     * @description Refused with STORAGE_VERIFICATION_FAILED when Cloudinary rejects the keys, or STORAGE_NOT_CONFIGURED when none are stored.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Credentials verified */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                cloudName: string
+                apiKey: string
+                hasApiSecret: boolean
+                verifiedAt: string | null
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignment-oversight': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Read-only submission rates across every class, for school management
+     * @description School admin only, refused with NOT_SCHOOL_ADMIN otherwise. Deliberately read only: setting work belongs to the teacher portal. `expected` is the class roll, so `missed` corrects itself as students submit.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Oversight rows */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                assignmentId: string
+                title: string
+                classId: string
+                subjectId: string
+                dueAt: string
+                expected: number
+                submitted: number
+                graded: number
+                late: number
+                missed: number
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Assignments; a student or parent sees only published ones
+     * @description Pass mine=true as a teacher for your own list including drafts. A student's or parent's list never includes an unpublished assignment.
+     */
+    get: {
+      parameters: {
+        query?: {
+          classId?: string
+          subjectId?: string
+          mine?: boolean
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Assignments */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Set an assignment as a draft; publishing is a separate step
+     * @description Only a teacher may set work, refused with NOT_A_TEACHER otherwise — school management oversight is read-only. The assignment is a draft until published.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            classId: string
+            sectionId?: string
+            batchId?: string
+            subjectId: string
+            title: string
+            /** @default  */
+            instructions?: string
+            assignedOn: string
+            /** Format: date-time */
+            dueAt: string | null
+            maxMarks?: number
+            /** @default true */
+            allowLateSubmission?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Assignment created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignments/{assignmentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** One assignment */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Assignment */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    /** Remove an assignment you set */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /**
+     * Change an assignment you set
+     * @description Only the teacher who set it, or a school admin, may change it — refused with NOT_ASSIGNMENT_OWNER otherwise. Extending a deadline silently makes earlier submissions on time, because status is derived rather than stored.
+     */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            title?: string
+            instructions?: string
+            assignedOn?: string
+            /** Format: date-time */
+            dueAt?: string | null
+            maxMarks?: number | null
+            allowLateSubmission?: boolean
+            sectionId?: string | null
+            batchId?: string | null
+            subjectId?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Assignment updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/assignments/{assignmentId}/publication': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Publish; makes it visible and notifies the class
+     * @description Notifies that class's students and their guardians, once, on the transition. Re-publishing is a no-op rather than a second notification. A failed notification does not undo the publish.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Published */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Unpublish, returning it to a draft */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Unpublished */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignments/{assignmentId}/attachments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Attach a file to an assignment
+     * @description Multipart, field name 'file'. Stored privately in the school's own Cloudinary account, so STORAGE_NOT_CONFIGURED is returned until they have set up storage. Content is sniffed, never trusted from the declared type.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Attached */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignments/{assignmentId}/attachments/{attachmentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove an attachment */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+          attachmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Removed */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string
+                title: string
+                instructions: string
+                assignedOn: string
+                dueAt: string
+                maxMarks: number | null
+                allowLateSubmission: boolean
+                attachments: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                isPublished: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/assignments/{assignmentId}/submissions': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Every submission on one assignment, for review */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Submissions */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                assignmentId: string
+                studentId: string
+                files: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                note: string
+                submittedAt: string
+                marksAwarded: number | null
+                feedback: string
+                gradedAt: string | null
+                isLate: boolean
+                /** @enum {string} */
+                status: 'pending' | 'submitted' | 'late' | 'graded' | 'missed'
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Submit your own work
+     * @description Multipart, field name 'file'. The student is taken from the session, never the request. Late work is accepted and flagged unless the teacher disabled that for this assignment, when it is refused with ASSIGNMENT_DEADLINE_PASSED. Re-submitting replaces the files and clears any grade already given.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          assignmentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Submitted */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                assignmentId: string
+                studentId: string
+                files: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                note: string
+                submittedAt: string
+                marksAwarded: number | null
+                feedback: string
+                gradedAt: string | null
+                isLate: boolean
+                /** @enum {string} */
+                status: 'pending' | 'submitted' | 'late' | 'graded' | 'missed'
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/submissions/{submissionId}/grade': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Enter a mark and feedback
+     * @description Only the teacher who set the assignment, or a school admin. A mark above the assignment's own maximum is refused with MARKS_ABOVE_MAXIMUM rather than stored.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          submissionId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            marksAwarded?: number | null
+            feedback?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Graded */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                assignmentId: string
+                studentId: string
+                files: {
+                  id: string
+                  originalName: string
+                  contentType: string
+                  byteSize: number
+                }[]
+                note: string
+                submittedAt: string
+                marksAwarded: number | null
+                feedback: string
+                gradedAt: string | null
+                isLate: boolean
+                /** @enum {string} */
+                status: 'pending' | 'submitted' | 'late' | 'graded' | 'missed'
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/submissions/{submissionId}/files/{fileId}/download': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A signed, expiring download link for one submitted file
+     * @description Permission is checked before the link is signed, and the file must be one actually on that submission — so changing an id in a link cannot reach another student's work. The link expires after five minutes.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          submissionId: string
+          fileId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Download link */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                url: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/homework': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A student's homework list with each item's status
+     * @description Status is derived on every read from the deadline and the timestamps: pending, submitted, late, graded, or missed. A student omits studentId and reads their own list; a parent names a linked child.
+     */
+    get: {
+      parameters: {
+        query?: {
+          studentId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Homework list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                assignment: {
+                  id: string
+                  classId: string
+                  sectionId: string | null
+                  batchId: string | null
+                  subjectId: string
+                  title: string
+                  instructions: string
+                  assignedOn: string
+                  dueAt: string
+                  maxMarks: number | null
+                  allowLateSubmission: boolean
+                  attachments: {
+                    id: string
+                    originalName: string
+                    contentType: string
+                    byteSize: number
+                  }[]
+                  isPublished: boolean
+                  createdAt: string
+                }
+                submission: {
+                  id: string
+                  assignmentId: string
+                  studentId: string
+                  files: {
+                    id: string
+                    originalName: string
+                    contentType: string
+                    byteSize: number
+                  }[]
+                  note: string
+                  submittedAt: string
+                  marksAwarded: number | null
+                  feedback: string
+                  gradedAt: string | null
+                  isLate: boolean
+                  /** @enum {string} */
+                  status: 'pending' | 'submitted' | 'late' | 'graded' | 'missed'
+                } | null
+                /** @enum {string} */
+                status: 'pending' | 'submitted' | 'late' | 'graded' | 'missed'
+                isLate: boolean
+              }[]
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/study-material': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Resources a school shares; a student sees their class plus the library
+     * @description Material with no class is school-wide library material. A student’s list is narrowed to their own class plus the library, resolved from the session rather than the query, so another class’s resources are never reachable.
+     */
+    get: {
+      parameters: {
+        query?: {
+          classId?: string
+          subjectId?: string
+          tag?: string
+          libraryOnly?: boolean
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Study material */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string | null
+                subjectId: string | null
+                title: string
+                description: string
+                tags: string[]
+                originalName: string
+                contentType: string
+                byteSize: number
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Upload a resource
+     * @description Multipart, field name 'file', with title, description, optional classId and subjectId, and comma-separated tags. Omit classId for school-wide library material. Stored privately in the school's own account, so STORAGE_NOT_CONFIGURED is returned until they have set up storage.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Uploaded */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string | null
+                subjectId: string | null
+                title: string
+                description: string
+                tags: string[]
+                originalName: string
+                contentType: string
+                byteSize: number
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/study-material/tags': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Every tag in use, so a filter can offer what exists */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Tags */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: string[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/study-material/{materialId}/download': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A signed, expiring download link
+     * @description Permission is checked before the link is signed, and the material must be one the caller can already see — so changing an id in a link cannot reach another class’s resource. The link expires after five minutes.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          materialId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Download link */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                url: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/study-material/{materialId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove a resource you uploaded */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          materialId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /**
+     * Change a resource you uploaded
+     * @description Only whoever uploaded it, or a school admin, refused with NOT_MATERIAL_OWNER otherwise. The file itself is not replaceable: upload a new resource instead.
+     */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          materialId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            title?: string
+            description?: string
+            tags?: string[]
+          }
+        }
+      }
+      responses: {
+        /** @description Updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                classId: string | null
+                subjectId: string | null
+                title: string
+                description: string
+                tags: string[]
+                originalName: string
+                contentType: string
+                byteSize: number
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     trace?: never
   }
   '/v1/attendance/staff': {

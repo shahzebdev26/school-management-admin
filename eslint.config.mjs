@@ -93,8 +93,10 @@ export default tseslint.config(
     },
   },
 
+  // env.public.ts is the client-safe counterpart — env.ts also validates
+  // API_ORIGIN, which has no browser value, so client code cannot import it.
   {
-    files: ['src/lib/env.ts'],
+    files: ['src/lib/env.ts', 'src/lib/env.public.ts'],
     rules: {
       'no-restricted-syntax': ['error', BAN_TYPE_ASSERTION, BAN_REACT_FC, BAN_HARDCODED_COLOUR],
     },

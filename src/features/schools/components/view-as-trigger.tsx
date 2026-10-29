@@ -2,7 +2,7 @@
 
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getEnv } from '@/lib/env'
+import { schoolWebOrigin } from '@/lib/env.public'
 import { useIssueTicketMutation } from '../api/use-issue-ticket-mutation'
 
 interface ViewAsTriggerProps {
@@ -17,7 +17,11 @@ export function ViewAsTrigger({ schoolId }: ViewAsTriggerProps) {
       { schoolId },
       {
         onSuccess: ({ ticket, schoolSlug }) => {
-          window.location.href = `https://${schoolSlug}.${getEnv().NEXT_PUBLIC_APP_DOMAIN}/view-as?ticket=${ticket}`
+          // This is a different Next.js app on its own origin (the school's own
+          // subdomain), not an internal route — next/navigation's router cannot
+          // reach it, so a full navigation is correct here.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = `${schoolWebOrigin(schoolSlug)}/view-as?ticket=${ticket}`
         },
       },
     )

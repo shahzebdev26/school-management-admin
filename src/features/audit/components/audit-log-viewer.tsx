@@ -70,8 +70,6 @@ function AuditFilters({
           <SelectItem value="create">Create</SelectItem>
           <SelectItem value="update">Update</SelectItem>
           <SelectItem value="delete">Delete</SelectItem>
-          <SelectItem value="login">Login</SelectItem>
-          <SelectItem value="logout">Logout</SelectItem>
         </SelectContent>
       </Select>
       <Select value={entityType} onValueChange={onEntityTypeChange}>
@@ -81,7 +79,7 @@ function AuditFilters({
         <SelectContent>
           <SelectItem value="all">All entities</SelectItem>
           <SelectItem value="school">School</SelectItem>
-          <SelectItem value="admin">Admin</SelectItem>
+          <SelectItem value="platform_admin">Admin</SelectItem>
           <SelectItem value="user">User</SelectItem>
         </SelectContent>
       </Select>
