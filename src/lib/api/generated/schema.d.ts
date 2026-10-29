@@ -57,6 +57,27 @@ export interface paths {
                 permissions: (
                   | 'session:read'
                   | 'students:read'
+                  | 'students:manage'
+                  | 'guardians:read'
+                  | 'guardians:manage'
+                  | 'staff:read'
+                  | 'staff:manage'
+                  | 'school-users:manage'
+                  | 'timetable:read'
+                  | 'timetable:manage'
+                  | 'attendance:read'
+                  | 'attendance:mark'
+                  | 'attendance:manage'
+                  | 'holidays:manage'
+                  | 'leave:read'
+                  | 'leave:request'
+                  | 'leave:approve'
+                  | 'exams:read'
+                  | 'exams:manage'
+                  | 'marks:enter'
+                  | 'marks:unlock'
+                  | 'results:read'
+                  | 'results:publish'
                   | 'platform:manage'
                   | 'audit:read'
                   | 'impersonation:start'
@@ -67,6 +88,18 @@ export interface paths {
                   | 'schools:manage'
                   | 'platform-admins:manage'
                   | 'analytics:read'
+                  | 'branches:read'
+                  | 'branches:manage'
+                  | 'academic-years:read'
+                  | 'academic-years:manage'
+                  | 'classes:read'
+                  | 'classes:manage'
+                  | 'subjects:read'
+                  | 'subjects:manage'
+                  | 'batches:read'
+                  | 'batches:manage'
+                  | 'roles:read'
+                  | 'roles:manage'
                 )[]
                 impersonation: {
                   depth: 1 | 2
@@ -216,6 +249,27 @@ export interface paths {
                 permissions: (
                   | 'session:read'
                   | 'students:read'
+                  | 'students:manage'
+                  | 'guardians:read'
+                  | 'guardians:manage'
+                  | 'staff:read'
+                  | 'staff:manage'
+                  | 'school-users:manage'
+                  | 'timetable:read'
+                  | 'timetable:manage'
+                  | 'attendance:read'
+                  | 'attendance:mark'
+                  | 'attendance:manage'
+                  | 'holidays:manage'
+                  | 'leave:read'
+                  | 'leave:request'
+                  | 'leave:approve'
+                  | 'exams:read'
+                  | 'exams:manage'
+                  | 'marks:enter'
+                  | 'marks:unlock'
+                  | 'results:read'
+                  | 'results:publish'
                   | 'platform:manage'
                   | 'audit:read'
                   | 'impersonation:start'
@@ -226,6 +280,18 @@ export interface paths {
                   | 'schools:manage'
                   | 'platform-admins:manage'
                   | 'analytics:read'
+                  | 'branches:read'
+                  | 'branches:manage'
+                  | 'academic-years:read'
+                  | 'academic-years:manage'
+                  | 'classes:read'
+                  | 'classes:manage'
+                  | 'subjects:read'
+                  | 'subjects:manage'
+                  | 'batches:read'
+                  | 'batches:manage'
+                  | 'roles:read'
+                  | 'roles:manage'
                 )[]
                 impersonation: {
                   depth: 1 | 2
@@ -369,6 +435,27 @@ export interface paths {
                 permissions: (
                   | 'session:read'
                   | 'students:read'
+                  | 'students:manage'
+                  | 'guardians:read'
+                  | 'guardians:manage'
+                  | 'staff:read'
+                  | 'staff:manage'
+                  | 'school-users:manage'
+                  | 'timetable:read'
+                  | 'timetable:manage'
+                  | 'attendance:read'
+                  | 'attendance:mark'
+                  | 'attendance:manage'
+                  | 'holidays:manage'
+                  | 'leave:read'
+                  | 'leave:request'
+                  | 'leave:approve'
+                  | 'exams:read'
+                  | 'exams:manage'
+                  | 'marks:enter'
+                  | 'marks:unlock'
+                  | 'results:read'
+                  | 'results:publish'
                   | 'platform:manage'
                   | 'audit:read'
                   | 'impersonation:start'
@@ -379,6 +466,18 @@ export interface paths {
                   | 'schools:manage'
                   | 'platform-admins:manage'
                   | 'analytics:read'
+                  | 'branches:read'
+                  | 'branches:manage'
+                  | 'academic-years:read'
+                  | 'academic-years:manage'
+                  | 'classes:read'
+                  | 'classes:manage'
+                  | 'subjects:read'
+                  | 'subjects:manage'
+                  | 'batches:read'
+                  | 'batches:manage'
+                  | 'roles:read'
+                  | 'roles:manage'
                 )[]
                 impersonation: {
                   depth: 1 | 2
@@ -1079,6 +1178,112 @@ export interface paths {
         }
       }
     }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branding/colour': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Update the school's brand colour */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            colour: string
+          }
+        }
+      }
+      responses: {
+        /** @description The resolved branding theme, with the new colour applied */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                schoolName: string
+                address: string | null
+                brandColour: string | null
+                brandHue: number | null
+                brandChroma: number | null
+                logoUrl: string | null
+                faviconUrl: string | null
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -3034,6 +3239,11297 @@ export interface paths {
         }
         /** @description Not permitted, or the account or school is suspended */
         403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branches': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all branches for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Branch list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                address: string | null
+                phone: string | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a new branch */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            shortCode: string
+            address?: string
+            phone?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Created branch */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                address: string | null
+                phone: string | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/branches/{branchId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a branch by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          branchId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Branch details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                address: string | null
+                phone: string | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a branch */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          branchId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            shortCode?: string
+            address?: string | null
+            phone?: string | null
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Updated branch */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                address: string | null
+                phone: string | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/academic-years': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all academic years for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Academic year list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                startDate: string
+                endDate: string
+                isCurrent: boolean
+                terms: {
+                  id: string
+                  name: string
+                  startDate: string
+                  endDate: string
+                }[]
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a new academic year */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            /** Format: date-time */
+            startDate: string | null
+            /** Format: date-time */
+            endDate: string | null
+            isCurrent?: boolean
+            /** @default [] */
+            terms?: {
+              name: string
+              /** Format: date-time */
+              startDate: string | null
+              /** Format: date-time */
+              endDate: string | null
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Created academic year */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                startDate: string
+                endDate: string
+                isCurrent: boolean
+                terms: {
+                  id: string
+                  name: string
+                  startDate: string
+                  endDate: string
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/academic-years/{academicYearId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get an academic year by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          academicYearId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Academic year details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                startDate: string
+                endDate: string
+                isCurrent: boolean
+                terms: {
+                  id: string
+                  name: string
+                  startDate: string
+                  endDate: string
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update an academic year */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          academicYearId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            /** Format: date-time */
+            startDate?: string | null
+            /** Format: date-time */
+            endDate?: string | null
+            isCurrent?: boolean
+            terms?: {
+              name: string
+              /** Format: date-time */
+              startDate: string | null
+              /** Format: date-time */
+              endDate: string | null
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Updated academic year */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                startDate: string
+                endDate: string
+                isCurrent: boolean
+                terms: {
+                  id: string
+                  name: string
+                  startDate: string
+                  endDate: string
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/subjects': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all subjects for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Subject list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                description: string | null
+                isElective: boolean
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a new subject */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            shortCode: string
+            description?: string
+            isElective?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Created subject */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                description: string | null
+                isElective: boolean
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/subjects/{subjectId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a subject by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          subjectId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Subject details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                description: string | null
+                isElective: boolean
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a subject */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          subjectId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            shortCode?: string
+            description?: string | null
+            isElective?: boolean
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Updated subject */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                shortCode: string
+                description: string | null
+                isElective: boolean
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/classes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all classes for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                sortOrder: number
+                sections: {
+                  id: string
+                  name: string
+                  capacity: number | null
+                }[]
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a new class */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            name: string
+            shortCode: string
+            /** @default 0 */
+            sortOrder?: number
+            /** @default [] */
+            sections?: {
+              name: string
+              capacity?: number
+            }[]
+            /** @default [] */
+            subjectIds?: string[]
+          }
+        }
+      }
+      responses: {
+        /** @description Created class */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                sortOrder: number
+                sections: {
+                  id: string
+                  name: string
+                  capacity: number | null
+                }[]
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/classes/{classId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a class by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          classId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                sortOrder: number
+                sections: {
+                  id: string
+                  name: string
+                  capacity: number | null
+                }[]
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a class */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          classId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId?: string
+            name?: string
+            shortCode?: string
+            sortOrder?: number
+            sections?: {
+              name: string
+              capacity?: number
+            }[]
+            subjectIds?: string[]
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Updated class */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                sortOrder: number
+                sections: {
+                  id: string
+                  name: string
+                  capacity: number | null
+                }[]
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/batches': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all batches for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Batch list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                description: string | null
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                capacity: number | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a new batch */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            name: string
+            shortCode: string
+            description?: string
+            /** @default [] */
+            subjectIds?: string[]
+            capacity?: number
+          }
+        }
+      }
+      responses: {
+        /** @description Created batch */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                description: string | null
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                capacity: number | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/batches/{batchId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a batch by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          batchId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Batch details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                description: string | null
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                capacity: number | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a batch */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          batchId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId?: string
+            name?: string
+            shortCode?: string
+            description?: string | null
+            subjectIds?: string[]
+            capacity?: number | null
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Updated batch */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                shortCode: string
+                description: string | null
+                subjects: {
+                  id: string
+                  subjectId: string
+                }[]
+                capacity: number | null
+                isActive: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/roles': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List all roles for the current school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Role list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student'
+                permissions: string[]
+                isSystem: boolean
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a custom role */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            /** @enum {string} */
+            portal: 'school_admin' | 'teacher' | 'parent' | 'student'
+            /** @default [] */
+            permissions?: (
+              | 'session:read'
+              | 'students:read'
+              | 'students:manage'
+              | 'guardians:read'
+              | 'guardians:manage'
+              | 'staff:read'
+              | 'staff:manage'
+              | 'school-users:manage'
+              | 'timetable:read'
+              | 'timetable:manage'
+              | 'attendance:read'
+              | 'attendance:mark'
+              | 'attendance:manage'
+              | 'holidays:manage'
+              | 'leave:read'
+              | 'leave:request'
+              | 'leave:approve'
+              | 'exams:read'
+              | 'exams:manage'
+              | 'marks:enter'
+              | 'marks:unlock'
+              | 'results:read'
+              | 'results:publish'
+              | 'platform:manage'
+              | 'audit:read'
+              | 'impersonation:start'
+              | 'branding:manage'
+              | 'notifications:send'
+              | 'notifications:read'
+              | 'push:manage'
+              | 'schools:manage'
+              | 'platform-admins:manage'
+              | 'analytics:read'
+              | 'branches:read'
+              | 'branches:manage'
+              | 'academic-years:read'
+              | 'academic-years:manage'
+              | 'classes:read'
+              | 'classes:manage'
+              | 'subjects:read'
+              | 'subjects:manage'
+              | 'batches:read'
+              | 'batches:manage'
+              | 'roles:read'
+              | 'roles:manage'
+            )[]
+          }
+        }
+      }
+      responses: {
+        /** @description Created role */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student'
+                permissions: string[]
+                isSystem: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/roles/{roleId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a role by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          roleId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Role details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student'
+                permissions: string[]
+                isSystem: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    /** Delete a custom role */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          roleId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Role deleted */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /** Update a custom role */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          roleId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            permissions?: (
+              | 'session:read'
+              | 'students:read'
+              | 'students:manage'
+              | 'guardians:read'
+              | 'guardians:manage'
+              | 'staff:read'
+              | 'staff:manage'
+              | 'school-users:manage'
+              | 'timetable:read'
+              | 'timetable:manage'
+              | 'attendance:read'
+              | 'attendance:mark'
+              | 'attendance:manage'
+              | 'holidays:manage'
+              | 'leave:read'
+              | 'leave:request'
+              | 'leave:approve'
+              | 'exams:read'
+              | 'exams:manage'
+              | 'marks:enter'
+              | 'marks:unlock'
+              | 'results:read'
+              | 'results:publish'
+              | 'platform:manage'
+              | 'audit:read'
+              | 'impersonation:start'
+              | 'branding:manage'
+              | 'notifications:send'
+              | 'notifications:read'
+              | 'push:manage'
+              | 'schools:manage'
+              | 'platform-admins:manage'
+              | 'analytics:read'
+              | 'branches:read'
+              | 'branches:manage'
+              | 'academic-years:read'
+              | 'academic-years:manage'
+              | 'classes:read'
+              | 'classes:manage'
+              | 'subjects:read'
+              | 'subjects:manage'
+              | 'batches:read'
+              | 'batches:manage'
+              | 'roles:read'
+              | 'roles:manage'
+            )[]
+          }
+        }
+      }
+      responses: {
+        /** @description Updated role */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                /** @enum {string} */
+                portal: 'school_admin' | 'teacher' | 'parent' | 'student'
+                permissions: string[]
+                isSystem: boolean
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/students': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List students for the current school */
+    get: {
+      parameters: {
+        query?: {
+          classId?: string
+          branchId?: string
+          batchId?: string
+          status?: string
+          search?: string
+          page?: number
+          pageSize?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Student list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Admit a student */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            classId?: string
+            sectionId?: string
+            /** @default [] */
+            batchIds?: string[]
+            admissionYearId: string
+            name: string
+            /** Format: date-time */
+            dateOfBirth?: string | null
+            /** @enum {string} */
+            gender?: 'male' | 'female' | 'other'
+            photoAssetId?: string
+            address?: string
+            medical?: {
+              /** @enum {string} */
+              bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+              allergies?: string
+              conditions?: string
+              emergencyContact?: string
+            }
+            /** @default [] */
+            documents?: {
+              label: string
+              assetId: string
+            }[]
+            /** Format: date-time */
+            admittedOn?: string | null
+          }
+        }
+      }
+      responses: {
+        /** @description Student admitted */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/students/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a student by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Student details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a student record */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId?: string
+            classId?: string | null
+            sectionId?: string | null
+            batchIds?: string[]
+            name?: string
+            /** Format: date-time */
+            dateOfBirth?: string | null
+            /** @enum {string} */
+            gender?: 'male' | 'female' | 'other'
+            photoAssetId?: string | null
+            address?: string
+            medical?: {
+              /** @enum {string} */
+              bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+              allergies?: string
+              conditions?: string
+              emergencyContact?: string
+            }
+            documents?: {
+              label: string
+              assetId: string
+            }[]
+            /** @enum {string} */
+            status?: 'active' | 'left' | 'graduated'
+          }
+        }
+      }
+      responses: {
+        /** @description Student updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/guardians': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List guardians for the current school */
+    get: {
+      parameters: {
+        query?: {
+          studentId?: string
+          search?: string
+          page?: number
+          pageSize?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Guardian list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                userId: string | null
+                name: string
+                phone: string
+                email: string | null
+                occupation: string | null
+                address: string | null
+                isActive: boolean
+                children: {
+                  id: string
+                  guardianId: string
+                  studentId: string
+                  relation: string
+                  isPrimary: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a guardian record */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            phone: string
+            /** Format: email */
+            email?: string
+            occupation?: string
+            address?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Guardian created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                userId: string | null
+                name: string
+                phone: string
+                email: string | null
+                occupation: string | null
+                address: string | null
+                isActive: boolean
+                children: {
+                  id: string
+                  guardianId: string
+                  studentId: string
+                  relation: string
+                  isPrimary: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/guardians/{guardianId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a guardian and their linked children */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          guardianId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Guardian details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                userId: string | null
+                name: string
+                phone: string
+                email: string | null
+                occupation: string | null
+                address: string | null
+                isActive: boolean
+                children: {
+                  id: string
+                  guardianId: string
+                  studentId: string
+                  relation: string
+                  isPrimary: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a guardian record */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          guardianId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            phone?: string
+            /** Format: email */
+            email?: string
+            occupation?: string
+            address?: string
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Guardian updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                userId: string | null
+                name: string
+                phone: string
+                email: string | null
+                occupation: string | null
+                address: string | null
+                isActive: boolean
+                children: {
+                  id: string
+                  guardianId: string
+                  studentId: string
+                  relation: string
+                  isPrimary: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/guardians/{guardianId}/children': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Link a child to this guardian */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          guardianId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentId: string
+            /** @enum {string} */
+            relation: 'father' | 'mother' | 'guardian' | 'other'
+            /** @default false */
+            isPrimary?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Child linked */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                userId: string | null
+                name: string
+                phone: string
+                email: string | null
+                occupation: string | null
+                address: string | null
+                isActive: boolean
+                children: {
+                  id: string
+                  guardianId: string
+                  studentId: string
+                  relation: string
+                  isPrimary: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/guardians/{guardianId}/children/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Unlink a child from this guardian */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          guardianId: string
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Child unlinked */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/staff': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List staff for the current school */
+    get: {
+      parameters: {
+        query?: {
+          branchId?: string
+          classId?: string
+          subjectId?: string
+          status?: string
+          search?: string
+          page?: number
+          pageSize?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Staff list */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                userId: string | null
+                employeeNumber: string
+                name: string
+                phone: string
+                email: string | null
+                designation: string | null
+                employmentType: string | null
+                joinedOn: string
+                qualifications: {
+                  id: string
+                  title: string
+                  institution: string | null
+                  year: number | null
+                }[]
+                subjectIds: string[]
+                classAssignments: {
+                  id: string
+                  classId: string
+                  sectionId: string | null
+                }[]
+                batchIds: string[]
+                status: string
+                createdAt: string
+                updatedAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a staff record */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            name: string
+            phone: string
+            /** Format: email */
+            email?: string
+            designation?: string
+            /** @enum {string} */
+            employmentType?: 'permanent' | 'contract' | 'visiting'
+            /** Format: date-time */
+            joinedOn?: string | null
+            /** @default [] */
+            qualifications?: {
+              title: string
+              institution?: string
+              year?: number
+            }[]
+            /** @default [] */
+            subjectIds?: string[]
+            /** @default [] */
+            classAssignments?: {
+              classId: string
+              sectionId?: string
+            }[]
+            /** @default [] */
+            batchIds?: string[]
+          }
+        }
+      }
+      responses: {
+        /** @description Staff created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                userId: string | null
+                employeeNumber: string
+                name: string
+                phone: string
+                email: string | null
+                designation: string | null
+                employmentType: string | null
+                joinedOn: string
+                qualifications: {
+                  id: string
+                  title: string
+                  institution: string | null
+                  year: number | null
+                }[]
+                subjectIds: string[]
+                classAssignments: {
+                  id: string
+                  classId: string
+                  sectionId: string | null
+                }[]
+                batchIds: string[]
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/staff/{staffId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a staff member by ID */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          staffId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Staff details */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                userId: string | null
+                employeeNumber: string
+                name: string
+                phone: string
+                email: string | null
+                designation: string | null
+                employmentType: string | null
+                joinedOn: string
+                qualifications: {
+                  id: string
+                  title: string
+                  institution: string | null
+                  year: number | null
+                }[]
+                subjectIds: string[]
+                classAssignments: {
+                  id: string
+                  classId: string
+                  sectionId: string | null
+                }[]
+                batchIds: string[]
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a staff record */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          staffId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId?: string
+            name?: string
+            phone?: string
+            /** Format: email */
+            email?: string
+            designation?: string
+            /** @enum {string} */
+            employmentType?: 'permanent' | 'contract' | 'visiting'
+            /** Format: date-time */
+            joinedOn?: string | null
+            qualifications?: {
+              title: string
+              institution?: string
+              year?: number
+            }[]
+            subjectIds?: string[]
+            classAssignments?: {
+              classId: string
+              sectionId?: string
+            }[]
+            batchIds?: string[]
+            /** @enum {string} */
+            status?: 'active' | 'left'
+          }
+        }
+      }
+      responses: {
+        /** @description Staff updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                userId: string | null
+                employeeNumber: string
+                name: string
+                phone: string
+                email: string | null
+                designation: string | null
+                employmentType: string | null
+                joinedOn: string
+                qualifications: {
+                  id: string
+                  title: string
+                  institution: string | null
+                  year: number | null
+                }[]
+                subjectIds: string[]
+                classAssignments: {
+                  id: string
+                  classId: string
+                  sectionId: string | null
+                }[]
+                batchIds: string[]
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/school-users': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Create a portal login for a student, guardian or staff member */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @enum {string} */
+            subject: 'student' | 'guardian' | 'staff'
+            subjectId: string
+          }
+        }
+      }
+      responses: {
+        /** @description Account created, temporary password returned once */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                userId: string
+                name: string
+                phone: string
+                portal: string
+                temporaryPassword: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/school-users/{userId}/deactivate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Deactivate a login, invalidating every session immediately */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          userId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Account status changed */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                userId: string
+                status: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/school-users/{userId}/activate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Reactivate a login */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          userId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Account status changed */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                userId: string
+                status: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/school-users/{userId}/reset-password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Reset a login password and return the new temporary password once */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          userId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Password reset */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                userId: string
+                temporaryPassword: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/period-templates': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List the period schedule of every campus */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Period schedules */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                teachingDays: string[]
+                periods: {
+                  id: string
+                  number: number
+                  name: string | null
+                  startMinute: number
+                  endMinute: number
+                  isBreak: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Create or replace a campus's period schedule */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            teachingDays: (
+              'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+            )[]
+            periods: {
+              number: number
+              name?: string
+              startMinute: number
+              endMinute: number
+              /** @default false */
+              isBreak?: boolean
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Period schedule saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                teachingDays: string[]
+                periods: {
+                  id: string
+                  number: number
+                  name: string | null
+                  startMinute: number
+                  endMinute: number
+                  isBreak: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/period-templates/{branchId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get one campus's period schedule */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          branchId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Period schedule */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                teachingDays: string[]
+                periods: {
+                  id: string
+                  number: number
+                  name: string | null
+                  startMinute: number
+                  endMinute: number
+                  isBreak: boolean
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/timetables/my-periods': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The signed-in teacher's own periods, from published timetables only */
+    get: {
+      parameters: {
+        query?: {
+          day?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Teacher periods */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                timetableId: string
+                timetableName: string
+                day: string
+                periodNumber: number
+                subjectId: string
+                teacherId: string
+                room: string | null
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/timetables/students/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A student's personal timetable, including any coaching batches */
+    get: {
+      parameters: {
+        query?: {
+          day?: string
+        }
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Student periods */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                timetableId: string
+                timetableName: string
+                day: string
+                periodNumber: number
+                subjectId: string
+                teacherId: string
+                room: string | null
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/timetables': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List timetables for the current school */
+    get: {
+      parameters: {
+        query?: {
+          classId?: string
+          batchId?: string
+          academicYearId?: string
+          status?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Timetable list, without slots */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a draft timetable for a class/section or a batch */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            branchId: string
+            academicYearId: string
+            classId?: string
+            sectionId?: string
+            batchId?: string
+            name: string
+          }
+        }
+      }
+      responses: {
+        /** @description Timetable created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/timetables/{timetableId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get one timetable with its full week of slots */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Timetable with slots */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Rename a timetable, or publish/unpublish it */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            /** @enum {string} */
+            status?: 'draft' | 'published'
+          }
+        }
+      }
+      responses: {
+        /** @description Timetable updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/timetables/{timetableId}/slots': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Add a period to a timetable; clashes are rejected at save time */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @enum {string} */
+            day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+            periodNumber: number
+            subjectId: string
+            teacherId: string
+            room?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Period added */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/timetables/{timetableId}/slots/{slotId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove a period from a timetable */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+          slotId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Period removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/class': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The class roster for one date, with any marks already taken */
+    get: {
+      parameters: {
+        query: {
+          classId: string
+          date: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class roster */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                classId: string
+                date: string
+                isHoliday: boolean
+                holidayName: string | null
+                entries: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  status: string | null
+                  reason: string | null
+                  source: string | null
+                  markedAt: string | null
+                  editable: boolean
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Save a whole class for one date in a single request */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            classId: string
+            date: string
+            marks: {
+              studentId: string
+              /** @enum {string} */
+              status: 'present' | 'absent' | 'late' | 'leave'
+              reason?: string
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Roster saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                classId: string
+                date: string
+                isHoliday: boolean
+                holidayName: string | null
+                entries: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  status: string | null
+                  reason: string | null
+                  source: string | null
+                  markedAt: string | null
+                  editable: boolean
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/scan': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Mark a student present from their ID card's QR token */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            qrToken: string
+            date?: string
+            /** @enum {string} */
+            status?: 'present' | 'absent' | 'late' | 'leave'
+          }
+        }
+      }
+      responses: {
+        /** @description Student marked */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentId: string
+                name: string
+                rollNumber: string
+                date: string
+                status: string
+                alreadyMarked: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/students/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A student's attendance over a range, with the shared percentage */
+    get: {
+      parameters: {
+        query: {
+          from: string
+          to: string
+        }
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Student attendance */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentId: string
+                from: string
+                to: string
+                present: number
+                absent: number
+                late: number
+                leave: number
+                workingDays: number
+                unmarked: number
+                percentage: number
+                isShort: boolean
+                thresholdPercent: number
+                days: {
+                  date: string
+                  status: string
+                  reason: string | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/holidays': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Non-teaching days, which are excluded from attendance percentages */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Holiday calendar */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string | null
+                date: string
+                name: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Add a holiday, school-wide or for one campus */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            date: string
+            name: string
+            branchId?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Holiday added */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string | null
+                date: string
+                name: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/holidays/{holidayId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove a holiday */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          holidayId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Holiday removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/leave-requests': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Leave requests; a parent, student or teacher sees only their own */
+    get: {
+      parameters: {
+        query?: {
+          status?: string
+          leaveType?: string
+          studentId?: string
+          staffId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Leave requests */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                subject: string
+                leaveType: string | null
+                days: number
+                studentId: string | null
+                staffId: string | null
+                fromDate: string
+                toDate: string
+                reason: string
+                status: string
+                decisionNote: string | null
+                decidedAt: string | null
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Request leave for yourself, or for a linked child
+     * @description A staff request must name a leaveType the school grants, refused with LEAVE_TYPE_UNKNOWN otherwise. Student requests carry no type.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentId?: string
+            leaveType?: string
+            fromDate: string
+            toDate: string
+            reason: string
+          }
+        }
+      }
+      responses: {
+        /** @description Leave requested */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                subject: string
+                leaveType: string | null
+                days: number
+                studentId: string | null
+                staffId: string | null
+                fromDate: string
+                toDate: string
+                reason: string
+                status: string
+                decisionNote: string | null
+                decidedAt: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/leave-requests/{leaveId}/decision': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Approve or reject; approving a student request writes leave marks
+     * @description Approving a staff request is refused with LEAVE_BALANCE_EXCEEDED when it would exceed the allowance, unless the school permits a negative balance.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          leaveId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @enum {string} */
+            status: 'approved' | 'rejected'
+            decisionNote?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Decision recorded */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                subject: string
+                leaveType: string | null
+                days: number
+                studentId: string | null
+                staffId: string | null
+                fromDate: string
+                toDate: string
+                reason: string
+                status: string
+                decisionNote: string | null
+                decidedAt: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/leave-policy': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The school's leave types and day counts, created from the defaults on first read */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Leave policy */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                types: {
+                  id: string
+                  code: string
+                  label: string
+                  daysPerYear: number
+                  carryOverCap: number
+                  isPaid: boolean
+                }[]
+                allowNegativeBalance: boolean
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Replace the leave types; each needs its own code and at least one must remain */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            types: {
+              code: string
+              label: string
+              daysPerYear: number
+              /** @default 0 */
+              carryOverCap?: number
+              /** @default true */
+              isPaid?: boolean
+            }[]
+            /** @default false */
+            allowNegativeBalance?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Leave policy replaced */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                types: {
+                  id: string
+                  code: string
+                  label: string
+                  daysPerYear: number
+                  carryOverCap: number
+                  isPaid: boolean
+                }[]
+                allowNegativeBalance: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/leave-balances': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Leave balances for the current academic year; staffId is a school admin's to pass
+     * @description Pending requests are counted against the balance and reported separately, so an applicant sees what is already committed and an admin sees that approving would overdraw. Approval is refused with LEAVE_BALANCE_EXCEEDED unless the school permits overdraw.
+     */
+    get: {
+      parameters: {
+        query?: {
+          staffId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Leave balances */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                staffId: string
+                academicYearId: string
+                academicYearName: string
+                balances: {
+                  code: string
+                  label: string
+                  daysPerYear: number
+                  carriedOver: number
+                  entitled: number
+                  taken: number
+                  pending: number
+                  remaining: number
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/staff': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The staff register for one date */
+    get: {
+      parameters: {
+        query: {
+          date: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Staff register */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                date: string
+                isHoliday: boolean
+                holidayName: string | null
+                entries: {
+                  staffId: string
+                  name: string
+                  employeeNumber: string
+                  status: string | null
+                  reason: string | null
+                  source: string | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Save the staff register for one date */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            date: string
+            marks: {
+              staffId: string
+              /** @enum {string} */
+              status: 'present' | 'absent' | 'late' | 'leave'
+              reason?: string
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Staff register saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                date: string
+                isHoliday: boolean
+                holidayName: string | null
+                entries: {
+                  staffId: string
+                  name: string
+                  employeeNumber: string
+                  status: string | null
+                  reason: string | null
+                  source: string | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/staff/{staffId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A staff member's attendance over a range, using the shared formula */
+    get: {
+      parameters: {
+        query: {
+          from: string
+          to: string
+        }
+        header?: never
+        path: {
+          staffId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Staff attendance */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                staffId: string
+                from: string
+                to: string
+                present: number
+                absent: number
+                late: number
+                leave: number
+                workingDays: number
+                unmarked: number
+                percentage: number
+                isShort: boolean
+                thresholdPercent: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance/import': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Import arrivals from a biometric device export (CSV)
+     * @description Expects identifier,date,time[,type]. The identifier is a student roll number or a staff employee number. Only arrivals are imported; absences are never inferred from a missing punch.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            csv: string
+          }
+        }
+      }
+      responses: {
+        /** @description Import summary, including rows that could not be read */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentsMarked: number
+                staffMarked: number
+                unmatched: string[]
+                skippedHolidays: string[]
+                problems: {
+                  line: number
+                  message: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/grading-schemes/{schemeId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Replace a grading scheme */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          schemeId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            bands: {
+              label: string
+              minPercent: number
+              maxPercent: number
+              gpa?: number
+              /** @default true */
+              isPassing?: boolean
+            }[]
+            /** @default false */
+            isDefault?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Scheme replaced */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                isDefault: boolean
+                bands: {
+                  id: string
+                  label: string
+                  minPercent: number
+                  maxPercent: number
+                  gpa: number | null
+                  isPassing: boolean
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    /**
+     * Delete a grading scheme
+     * @description Refused if any exam grades against it, or if it is the school default — removing it would blank every grade those exams show.
+     */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          schemeId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Scheme deleted */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/grading-schemes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Grade bands configured for this school */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Grading schemes */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                isDefault: boolean
+                bands: {
+                  id: string
+                  label: string
+                  minPercent: number
+                  maxPercent: number
+                  gpa: number | null
+                  isPassing: boolean
+                }[]
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a grading scheme; overlapping bands are rejected */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            bands: {
+              label: string
+              minPercent: number
+              maxPercent: number
+              gpa?: number
+              /** @default true */
+              isPassing?: boolean
+            }[]
+            /** @default false */
+            isDefault?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Scheme created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                isDefault: boolean
+                bands: {
+                  id: string
+                  label: string
+                  minPercent: number
+                  maxPercent: number
+                  gpa: number | null
+                  isPassing: boolean
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List exams for the current school */
+    get: {
+      parameters: {
+        query?: {
+          classId?: string
+          academicYearId?: string
+          status?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Exams */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Create a draft exam; paper date clashes are rejected at save time */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            academicYearId: string
+            classId: string
+            gradingSchemeId?: string
+            name: string
+            termName?: string
+            /**
+             * @default term
+             * @enum {string}
+             */
+            type?: 'term' | 'midterm' | 'unit' | 'final' | 'mock' | 'other'
+            /** @default [] */
+            papers?: {
+              subjectId: string
+              date: string
+              startMinute?: number
+              durationMinutes?: number
+              maxMarks: number
+              passingMarks: number
+              weightPercent?: number
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Exam created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get one exam with its papers */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Exam */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Edit papers, or publish the schedule */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            termName?: string
+            gradingSchemeId?: string
+            papers?: {
+              subjectId: string
+              date: string
+              startMinute?: number
+              durationMinutes?: number
+              maxMarks: number
+              passingMarks: number
+              weightPercent?: number
+            }[]
+            /** @enum {string} */
+            status?: 'draft' | 'published'
+          }
+        }
+      }
+      responses: {
+        /** @description Exam updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/exams/{examId}/marks': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The marks sheet for one paper, graded with the school scheme */
+    get: {
+      parameters: {
+        query: {
+          paperId: string
+        }
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Marks sheet */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                examId: string
+                paperId: string
+                subjectId: string
+                maxMarks: number
+                passingMarks: number
+                isSubmitted: boolean
+                isEditable: boolean
+                submittedAt: string | null
+                reopenedAt: string | null
+                reopenReason: string | null
+                rows: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  score: number | null
+                  isAbsent: boolean
+                  percent: number | null
+                  grade: string | null
+                  isPassing: boolean | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Save marks for a paper; refused once submitted unless reopened */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            paperId: string
+            marks: {
+              studentId: string
+              score?: number
+              /** @default false */
+              isAbsent?: boolean
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Marks saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                examId: string
+                paperId: string
+                subjectId: string
+                maxMarks: number
+                passingMarks: number
+                isSubmitted: boolean
+                isEditable: boolean
+                submittedAt: string | null
+                reopenedAt: string | null
+                reopenReason: string | null
+                rows: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  score: number | null
+                  isAbsent: boolean
+                  percent: number | null
+                  grade: string | null
+                  isPassing: boolean | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/marks/submit': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Submit a paper as final, locking it to the teacher
+     * @description Blanks are refused here rather than at save time, so a sheet can be entered over several sittings.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            paperId: string
+          }
+        }
+      }
+      responses: {
+        /** @description Marks submitted */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                examId: string
+                paperId: string
+                subjectId: string
+                maxMarks: number
+                passingMarks: number
+                isSubmitted: boolean
+                isEditable: boolean
+                submittedAt: string | null
+                reopenedAt: string | null
+                reopenReason: string | null
+                rows: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  score: number | null
+                  isAbsent: boolean
+                  percent: number | null
+                  grade: string | null
+                  isPassing: boolean | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/marks/reopen': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Reopen a submitted paper. School admin only; the reason is optional but recorded */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            paperId: string
+            reason?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Marks reopened */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                examId: string
+                paperId: string
+                subjectId: string
+                maxMarks: number
+                passingMarks: number
+                isSubmitted: boolean
+                isEditable: boolean
+                submittedAt: string | null
+                reopenedAt: string | null
+                reopenReason: string | null
+                rows: {
+                  studentId: string
+                  name: string
+                  rollNumber: string
+                  score: number | null
+                  isAbsent: boolean
+                  percent: number | null
+                  grade: string | null
+                  isPassing: boolean | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/report-cards/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One report card as data
+     * @description Invisible to a parent or student until the school publishes results for the exam. Rank appears only if the school enabled it.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Report card */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentName: string
+                rollNumber: string
+                examName: string
+                termName: string | null
+                subjects: {
+                  subjectName: string
+                  maxMarks: number
+                  score: number | null
+                  isAbsent: boolean
+                  percent: number | null
+                  grade: string | null
+                  isPassing: boolean | null
+                }[]
+                overallPercent: number
+                overallGrade: string | null
+                attendancePercent: number | null
+                remark: string | null
+                rank: number | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/report-cards/{studentId}/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** One report card as a branded PDF */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/report-cards/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A whole class's cards as one multi-page PDF, in a single render */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/remarks': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Write or replace a teacher's remark for one student */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentId: string
+            remark: string
+          }
+        }
+      }
+      responses: {
+        /** @description Remark saved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentId: string
+                remark: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/results/publish': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Publish results, making report cards visible to parents and students
+     * @description Refused while any paper is still unsubmitted.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @default false */
+            showRank?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Results published */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/results/unpublish': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Hide report cards again */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Results hidden */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                classId: string
+                gradingSchemeId: string | null
+                name: string
+                termName: string | null
+                type: string
+                status: string
+                publishedAt: string | null
+                resultsPublishedAt: string | null
+                showRank: boolean
+                papers: {
+                  id: string
+                  subjectId: string
+                  date: string
+                  startMinute: number | null
+                  durationMinutes: number | null
+                  maxMarks: number
+                  passingMarks: number
+                  weightPercent: number | null
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/admit-cards/{studentId}/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One admit card as a branded PDF
+     * @description Requires the exam schedule to be published. No seating or room allocation: out of scope.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/admit-cards/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A whole class's admit cards as one multi-page PDF */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/students/{studentId}/results': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Results across terms, oldest first, for the progress tracker
+     * @description A parent or student sees only published exams.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Term results */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                examId: string
+                examName: string
+                termName: string | null
+                overallPercent: number
+                overallGrade: string | null
+                rank: number | null
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/analytics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Subject averages, distribution and pass rate for a class
+     * @description Staff only. Absentees are excluded from every figure. No weak-student flagging: out of scope.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class performance */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                subjectName: string
+                maxMarks: number
+                averagePercent: number
+                highestPercent: number
+                lowestPercent: number
+                passRatePercent: number
+                sat: number
+                absent: number
+                distribution: {
+                  label: string
+                  count: number
+                }[]
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
           headers: {
             [name: string]: unknown
           }

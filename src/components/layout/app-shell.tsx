@@ -43,6 +43,13 @@ function NavLinks({
             key={item.href}
             href={item.href}
             {...(onNavigate ? { onClick: onNavigate } : {})}
+            /*
+             * Announces the current section to a screen reader, which the
+             * styling alone does not. Also what the tests assert on, so a
+             * change of styling cannot silently break the check that exactly
+             * one section is marked.
+             */
+            {...(active ? { 'aria-current': 'page' as const } : {})}
             className={cn(
               'flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-bold transition-colors',
               active
