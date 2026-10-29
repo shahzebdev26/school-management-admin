@@ -111,6 +111,8 @@ export interface paths {
                 impersonation: {
                   depth: 1 | 2
                   realName: string
+                  /** @enum {string} */
+                  realKind: 'school_user' | 'platform_admin'
                   viewingAs: {
                     name: string
                     /** @enum {string} */
@@ -310,6 +312,8 @@ export interface paths {
                 impersonation: {
                   depth: 1 | 2
                   realName: string
+                  /** @enum {string} */
+                  realKind: 'school_user' | 'platform_admin'
                   viewingAs: {
                     name: string
                     /** @enum {string} */
@@ -503,6 +507,8 @@ export interface paths {
                 impersonation: {
                   depth: 1 | 2
                   realName: string
+                  /** @enum {string} */
+                  realKind: 'school_user' | 'platform_admin'
                   viewingAs: {
                     name: string
                     /** @enum {string} */
@@ -936,6 +942,11 @@ export interface paths {
                 brandChroma: number | null
                 logoUrl: string | null
                 faviconUrl: string | null
+                icons: {
+                  size192: string | null
+                  size512: string | null
+                  maskable: string | null
+                }
               }
             }
           }
@@ -1030,6 +1041,11 @@ export interface paths {
                 brandChroma: number | null
                 logoUrl: string | null
                 faviconUrl: string | null
+                icons: {
+                  size192: string | null
+                  size512: string | null
+                  maskable: string | null
+                }
               }
             }
           }
@@ -1140,6 +1156,11 @@ export interface paths {
                 brandChroma: number | null
                 logoUrl: string | null
                 faviconUrl: string | null
+                icons: {
+                  size192: string | null
+                  size512: string | null
+                  maskable: string | null
+                }
               }
             }
           }
@@ -1245,6 +1266,11 @@ export interface paths {
                 brandChroma: number | null
                 logoUrl: string | null
                 faviconUrl: string | null
+                icons: {
+                  size192: string | null
+                  size512: string | null
+                  maskable: string | null
+                }
               }
             }
           }
@@ -1453,6 +1479,7 @@ export interface paths {
               data: {
                 id: string
                 senderUserId: string
+                senderName: string
                 title: string
                 body: string
                 category: string | null
@@ -1639,6 +1666,64 @@ export interface paths {
         }
       }
     }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/push-subscriptions/vapid-public-key': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The VAPID public key devices need to subscribe for Web Push */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The VAPID public key */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                key: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -2499,7 +2584,8 @@ export interface paths {
                 name: string
                 email: string
                 phone: string | null
-                status: string
+                /** @enum {string} */
+                status: 'active' | 'inactive'
                 lastLoginAt: string | null
                 createdAt: string
               }[]
@@ -2600,7 +2686,8 @@ export interface paths {
                 name: string
                 email: string
                 phone: string | null
-                status: string
+                /** @enum {string} */
+                status: 'active' | 'inactive'
                 lastLoginAt: string | null
                 createdAt: string
               }
@@ -2718,7 +2805,8 @@ export interface paths {
                 name: string
                 email: string
                 phone: string | null
-                status: string
+                /** @enum {string} */
+                status: 'active' | 'inactive'
                 lastLoginAt: string | null
                 createdAt: string
               }
@@ -2818,7 +2906,8 @@ export interface paths {
                 name: string
                 email: string
                 phone: string | null
-                status: string
+                /** @enum {string} */
+                status: 'active' | 'inactive'
                 lastLoginAt: string | null
                 createdAt: string
               }
@@ -2923,6 +3012,96 @@ export interface paths {
       requestBody?: never
       responses: {
         /** @description Platform admin deactivated */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/platform-admins/{id}/activate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Re-activate a deactivated platform admin */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Platform admin activated */
         204: {
           headers: {
             [name: string]: unknown
@@ -3227,7 +3406,7 @@ export interface paths {
       }
       requestBody?: never
       responses: {
-        /** @description Counts by school status, school type, and total platform admins */
+        /** @description Counts by school status, school type, total platform admins, and cross-school enrolment/attendance trends */
         200: {
           headers: {
             [name: string]: unknown
@@ -3246,6 +3425,15 @@ export interface paths {
                   tuition: number
                 }
                 totalAdmins: number
+                enrolmentTrend: {
+                  month: string
+                  count: number
+                }[]
+                attendanceOverview: {
+                  /** @enum {string} */
+                  status: 'present' | 'absent' | 'late' | 'leave'
+                  count: number
+                }[]
               }
             }
           }

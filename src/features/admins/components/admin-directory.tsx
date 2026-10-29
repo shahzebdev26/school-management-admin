@@ -14,28 +14,27 @@ import { Screen } from '@/components/shared/screen'
 import { StatusBadge, type StatusTone } from '@/components/shared/status-badge'
 import { Button } from '@/components/ui/button'
 import type { DataTableColumn } from '@/components/shared/data-table.types'
+import { ApiError } from '@/lib/api/errors'
 import { useAuthenticatedSession } from '@/features/auth/hooks/use-authenticated-session'
+import { useActivateAdminMutation } from '../api/use-activate-admin-mutation'
 import { useAdminsQuery, type AdminListItem } from '../api/use-admins-query'
 import { useDeactivateAdminMutation } from '../api/use-deactivate-admin-mutation'
 
 const PAGE_SIZE = 20
 
+// Must match the API's PLATFORM_ADMIN_STATUSES exactly ('active' | 'inactive')
+// — the schema is now a real enum precisely so this can't silently drift again.
 const STATUS_TONE: Record<string, StatusTone> = {
   active: 'success',
-  deactivated: 'danger',
+  inactive: 'danger',
 }
 
-function DeactivateAction({
-  admin,
-  currentAdminId,
-}: {
-  admin: AdminListItem
-  currentAdminId: string
-}) {
-  const mutation = useDeactivateAdminMutation()
-  const isSelf = admin.id === currentAdminId
+function reportError(error: unknown, fallback: string) {
+  toast.error(error instanceof ApiError ? error.message : fallback)
+}
 
-  if (admin.status === 'deactivated' || isSelf) return null
+function DeactivateAction({ admin }: { admin: AdminListItem }) {
+  const mutation = useDeactivateAdminMutation()
 
   return (
     <ConfirmDialog
@@ -58,10 +57,64 @@ function DeactivateAction({
           onSuccess: () => {
             toast.success(`${admin.name} deactivated`)
           },
+          onError: (error) => {
+            reportError(error, 'Could not deactivate this admin')
+          },
         })
       }}
       isPending={mutation.isPending}
     />
+  )
+}
+
+function ActivateAction({ admin }: { admin: AdminListItem }) {
+  const mutation = useActivateAdminMutation()
+
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button
+          variant="outline"
+          size="xs"
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        >
+          Activate
+        </Button>
+      }
+      tone="default"
+      title={`Activate ${admin.name}?`}
+      description="This admin will be able to sign in to the platform again."
+      confirmLabel="Activate"
+      onConfirm={() => {
+        mutation.mutate(admin.id, {
+          onSuccess: () => {
+            toast.success(`${admin.name} activated`)
+          },
+          onError: (error) => {
+            reportError(error, 'Could not activate this admin')
+          },
+        })
+      }}
+      isPending={mutation.isPending}
+    />
+  )
+}
+
+function AdminStatusAction({
+  admin,
+  currentAdminId,
+}: {
+  admin: AdminListItem
+  currentAdminId: string
+}) {
+  if (admin.id === currentAdminId) return null
+
+  return admin.status === 'active' ? (
+    <DeactivateAction admin={admin} />
+  ) : (
+    <ActivateAction admin={admin} />
   )
 }
 
@@ -83,7 +136,7 @@ function useAdminColumns(sessionId: string | null): DataTableColumn<AdminListIte
       id: 'actions',
       header: '',
       cell: (row) =>
-        sessionId ? <DeactivateAction admin={row} currentAdminId={sessionId} /> : null,
+        sessionId ? <AdminStatusAction admin={row} currentAdminId={sessionId} /> : null,
     },
   ]
 }

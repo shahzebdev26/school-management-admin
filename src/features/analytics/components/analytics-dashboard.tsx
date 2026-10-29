@@ -1,12 +1,13 @@
 'use client'
 
-import { BarChart3, Building2, Shield, TrendingUp } from 'lucide-react'
-import { EmptyState } from '@/components/shared/empty-state'
+import { Building2, Shield } from 'lucide-react'
 import { ErrorState } from '@/components/shared/error-state'
 import { Screen } from '@/components/shared/screen'
 import { StatTile } from '@/components/shared/stat-tile'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAnalyticsQuery } from '../api/use-analytics-query'
+import { AttendanceOverviewChart } from './attendance-overview-chart'
+import { EnrolmentTrendChart } from './enrolment-trend-chart'
 
 function StatsSkeleton() {
   return (
@@ -41,7 +42,7 @@ export function AnalyticsDashboard() {
     )
   }
 
-  const { schoolsByStatus, totalAdmins } = query.data
+  const { schoolsByStatus, totalAdmins, enrolmentTrend, attendanceOverview } = query.data
 
   return (
     <Screen title="Dashboard" description="Platform overview">
@@ -57,8 +58,8 @@ export function AnalyticsDashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <EmptyState icon={TrendingUp} message="Enrolment Trends" hint="Coming soon" />
-        <EmptyState icon={BarChart3} message="Attendance Overview" hint="Coming soon" />
+        <EnrolmentTrendChart points={enrolmentTrend} />
+        <AttendanceOverviewChart rows={attendanceOverview} />
       </div>
     </Screen>
   )

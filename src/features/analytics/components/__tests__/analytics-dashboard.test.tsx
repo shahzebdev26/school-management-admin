@@ -18,6 +18,16 @@ function mockAnalytics(overrides: Record<string, unknown> = {}) {
           schoolsByStatus: { trial: 3, active: 12, suspended: 1 },
           schoolsByType: { school: 10, coaching: 4, tuition: 2 },
           totalAdmins: 5,
+          enrolmentTrend: [
+            { month: '2026-05', count: 2 },
+            { month: '2026-06', count: 4 },
+          ],
+          attendanceOverview: [
+            { status: 'present', count: 18 },
+            { status: 'late', count: 2 },
+            { status: 'absent', count: 1 },
+            { status: 'leave', count: 0 },
+          ],
           ...overrides,
         },
       }),
@@ -52,11 +62,24 @@ describe('AnalyticsDashboard', () => {
       schoolsByStatus: { trial: 0, active: 0, suspended: 0 },
       schoolsByType: { school: 0, coaching: 0, tuition: 0 },
       totalAdmins: 0,
+      enrolmentTrend: [],
+      attendanceOverview: [],
     })
     renderDashboard()
 
     const zeroes = await screen.findAllByText('0')
     expect(zeroes.length).toBeGreaterThan(0)
+    expect(await screen.findByText(/no admissions/i)).toBeVisible()
+    expect(await screen.findByText(/no attendance has been marked/i)).toBeVisible()
+  })
+
+  it('shows the enrolment and attendance charts with real data', async () => {
+    mockAnalytics()
+    renderDashboard()
+
+    expect(await screen.findByText('Enrolment trend')).toBeVisible()
+    expect(screen.getByText('Attendance overview')).toBeVisible()
+    expect(screen.getByTitle('Present: 18')).toBeVisible()
   })
 
   it('offers a retry when analytics fail to load', async () => {

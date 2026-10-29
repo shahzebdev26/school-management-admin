@@ -74,13 +74,38 @@ describe('AdminDirectory', () => {
     expect(screen.queryByRole('button', { name: 'Deactivate' })).not.toBeInTheDocument()
   })
 
-  it('offers nothing for an already deactivated admin', async () => {
+  it('offers activation, not deactivation, for an inactive admin', async () => {
     mockSession('me-1')
-    mockAdmins([admin({ status: 'deactivated' })])
+    mockAdmins([admin({ status: 'inactive' })])
     renderDirectory()
 
     expect(await screen.findByText('Ayesha Khan')).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Deactivate' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Activate' })).toBeVisible()
+  })
+
+  it('activates only after the confirmation is accepted', async () => {
+    let activated: string | null = null
+    mockSession('me-1')
+    mockAdmins([admin({ status: 'inactive' })])
+    server.use(
+      http.post('http://localhost:3000/api/v1/platform-admins/admin-1/activate', () => {
+        activated = 'admin-1'
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    const user = userEvent.setup()
+    renderDirectory()
+
+    await user.click(await screen.findByRole('button', { name: 'Activate' }))
+    expect(activated).toBeNull()
+
+    const dialog = await screen.findByRole('dialog')
+    await user.click(within(dialog).getByRole('button', { name: 'Activate' }))
+
+    await vi.waitFor(() => {
+      expect(activated).toBe('admin-1')
+    })
   })
 
   it('warns that the admin loses sign-in before deactivating', async () => {

@@ -56,17 +56,26 @@ async function readBody(request: NextRequest): Promise<Buffer | undefined> {
   return Buffer.from(await request.arrayBuffer())
 }
 
-export async function proxyToApi(request: NextRequest): Promise<Response> {
+export interface UpstreamResponse {
+  status: number
+  headers: http.IncomingHttpHeaders
+  body: Buffer
+}
+
+export async function requestUpstream(
+  request: NextRequest,
+  overridePath?: string,
+): Promise<UpstreamResponse> {
   const target = new URL(getEnv().API_ORIGIN)
   const transport = target.protocol === 'https:' ? https : http
   const body = await readBody(request)
 
-  return new Promise<Response>((resolve, reject) => {
+  return new Promise<UpstreamResponse>((resolve, reject) => {
     const upstreamRequest = transport.request(
       {
         hostname: target.hostname,
         port: target.port === '' ? undefined : target.port,
-        path: buildUpstreamPath(request),
+        path: overridePath ?? buildUpstreamPath(request),
         method: request.method,
         headers: buildUpstreamHeaders(request),
       },
@@ -74,19 +83,11 @@ export async function proxyToApi(request: NextRequest): Promise<Response> {
         const chunks: Buffer[] = []
         upstreamResponse.on('data', (chunk: Buffer) => chunks.push(chunk))
         upstreamResponse.on('end', () => {
-          try {
-            const status = upstreamResponse.statusCode ?? 502
-            const isNullBody = status === 204 || status === 304
-
-            resolve(
-              new Response(isNullBody ? null : Buffer.concat(chunks), {
-                status,
-                headers: toResponseHeaders(upstreamResponse.headers),
-              }),
-            )
-          } catch (error) {
-            reject(error instanceof Error ? error : new Error(String(error)))
-          }
+          resolve({
+            status: upstreamResponse.statusCode ?? 502,
+            headers: upstreamResponse.headers,
+            body: Buffer.concat(chunks),
+          })
         })
       },
     )
@@ -98,5 +99,15 @@ export async function proxyToApi(request: NextRequest): Promise<Response> {
     }
 
     upstreamRequest.end()
+  })
+}
+
+export async function proxyToApi(request: NextRequest): Promise<Response> {
+  const upstream = await requestUpstream(request)
+  const isNullBody = upstream.status === 204 || upstream.status === 304
+
+  return new Response(isNullBody ? null : new Uint8Array(upstream.body), {
+    status: upstream.status,
+    headers: toResponseHeaders(upstream.headers),
   })
 }
