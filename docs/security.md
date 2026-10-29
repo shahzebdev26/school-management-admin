@@ -58,7 +58,8 @@ Rules:
 - The session lives in an `httpOnly` cookie set by the API, scoped to `admin.techsparks.co`. **The app never reads, stores, or forwards a token.**
 - **Never put a token in `localStorage`, `sessionStorage`, or a global variable.** An XSS bug then becomes full account takeover.
 - Never log a token, a password, or a full admin record.
-- On 401, clear the query cache and redirect to login. Stale cached data must not remain visible after a session ends.
+- On 401, the API client (`lib/api/client.ts`) tries one silent refresh and replays the original request before giving up. Concurrent 401s share a single refresh call — the refresh token rotates on every use, so presenting it twice at once would revoke the whole chain.
+- If the refresh also fails, clear the query cache and redirect to login. Stale cached data must not remain visible after a session ends.
 
 ```ts
 // On logout or 401

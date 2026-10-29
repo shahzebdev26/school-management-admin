@@ -74,12 +74,19 @@ export async function proxyToApi(request: NextRequest): Promise<Response> {
         const chunks: Buffer[] = []
         upstreamResponse.on('data', (chunk: Buffer) => chunks.push(chunk))
         upstreamResponse.on('end', () => {
-          resolve(
-            new Response(Buffer.concat(chunks), {
-              status: upstreamResponse.statusCode ?? 502,
-              headers: toResponseHeaders(upstreamResponse.headers),
-            }),
-          )
+          try {
+            const status = upstreamResponse.statusCode ?? 502
+            const isNullBody = status === 204 || status === 304
+
+            resolve(
+              new Response(isNullBody ? null : Buffer.concat(chunks), {
+                status,
+                headers: toResponseHeaders(upstreamResponse.headers),
+              }),
+            )
+          } catch (error) {
+            reject(error instanceof Error ? error : new Error(String(error)))
+          }
         })
       },
     )
