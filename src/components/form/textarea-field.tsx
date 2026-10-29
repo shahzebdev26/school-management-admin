@@ -41,6 +41,7 @@ export function TextareaField<TValues extends FieldValues>({
         >
           <Textarea
             {...textareaProps}
+            className="bg-card"
             id={id}
             name={field.name}
             value={typeof field.value === 'string' ? field.value : ''}

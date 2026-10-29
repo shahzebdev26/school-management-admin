@@ -215,7 +215,7 @@
   *:focus,
   *:focus-visible,
   *:active {
-    outline: none;
+    outline: none !important;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -62,7 +62,7 @@ function AuditFilters({
         <SearchInput value={search} onValueChange={onSearchChange} label="Search audit logs" />
       </div>
       <Select value={action} onValueChange={onActionChange}>
-        <SelectTrigger size="sm">
+        <SelectTrigger className="bg-card">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -75,7 +75,7 @@ function AuditFilters({
         </SelectContent>
       </Select>
       <Select value={entityType} onValueChange={onEntityTypeChange}>
-        <SelectTrigger size="sm">
+        <SelectTrigger className="bg-card">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

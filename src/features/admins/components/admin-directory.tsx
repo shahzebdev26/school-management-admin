@@ -141,7 +141,7 @@ export function AdminDirectory() {
       title="Admins"
       description="Manage platform administrators"
       actions={
-        <Button asChild>
+        <Button asChild className="h-[52px]">
           <Link href="/dashboard/admins/create">
             <Plus aria-hidden="true" />
             Add admin

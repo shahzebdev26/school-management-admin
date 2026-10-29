@@ -88,7 +88,7 @@ function SchoolFilters({
         <SearchInput value={search} onValueChange={onSearchChange} label="Search schools" />
       </div>
       <Select value={status} onValueChange={onStatusChange}>
-        <SelectTrigger size="sm">
+        <SelectTrigger className="bg-card">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -99,7 +99,7 @@ function SchoolFilters({
         </SelectContent>
       </Select>
       <Select value={type} onValueChange={onTypeChange}>
-        <SelectTrigger size="sm">
+        <SelectTrigger className="bg-card">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -194,7 +194,7 @@ export function SchoolDirectory() {
       title="Schools"
       description="Manage registered schools on the platform"
       actions={
-        <Button asChild>
+        <Button asChild className="h-[52px]">
           <Link href="/dashboard/schools/create">
             <Plus aria-hidden="true" />
             Add school

@@ -58,7 +58,7 @@ export function SelectField<TValues extends FieldValues>({
           >
             <SelectTrigger
               id={id}
-              className="w-full"
+              className="w-full rounded-xl bg-card text-sm font-semibold hover:border-primary/60 data-[size=default]:h-12"
               aria-invalid={fieldState.error !== undefined}
               aria-describedby={describedBy(
                 id,

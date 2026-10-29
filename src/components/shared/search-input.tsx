@@ -33,7 +33,7 @@ export function SearchInput({ value, onValueChange, label, placeholder }: Search
         onChange={(event) => {
           onValueChange(event.target.value)
         }}
-        className="pr-12 pl-11"
+        className="bg-card pr-12 pl-11 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value.length > 0 ? (
         <Button
