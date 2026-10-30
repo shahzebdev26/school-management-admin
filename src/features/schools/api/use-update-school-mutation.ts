@@ -9,6 +9,7 @@ interface UpdateSchoolInput {
   contactPerson?: string
   phone?: string
   address?: string
+  features?: Partial<Record<string, boolean>>
 }
 
 export function useUpdateSchoolMutation(id: string) {

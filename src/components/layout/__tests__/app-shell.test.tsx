@@ -16,6 +16,7 @@ const SESSION: Session = {
   portal: 'platform_admin',
   schoolId: null,
   permissions: [],
+  features: {},
   impersonation: null,
 }
 

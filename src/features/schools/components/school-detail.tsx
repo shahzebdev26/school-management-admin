@@ -22,6 +22,7 @@ import {
   type UpdateSchoolFormValues,
   type UpdateSchoolInput,
 } from '../schemas/update-school-schema'
+import { SchoolFeaturesPanel } from './school-features-panel'
 import { ViewAsTrigger } from './view-as-trigger'
 
 const STATUS_TONE: Record<string, StatusTone> = {
@@ -206,6 +207,8 @@ function SchoolDetailContent({
           <SchoolInfoDisplay school={school} />
         )}
       </section>
+      <Separator />
+      <SchoolFeaturesPanel id={id} features={school.features} />
       <Separator />
       <SchoolStatusSection school={school} id={id} />
     </Screen>

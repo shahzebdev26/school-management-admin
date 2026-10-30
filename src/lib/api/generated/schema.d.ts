@@ -69,6 +69,11 @@ export interface paths {
                   | 'attendance:mark'
                   | 'attendance:manage'
                   | 'holidays:manage'
+                  | 'calendar:read'
+                  | 'calendar:manage'
+                  | 'certificates:issue'
+                  | 'certificates:read'
+                  | 'data:export'
                   | 'leave:read'
                   | 'leave:request'
                   | 'leave:approve'
@@ -89,6 +94,12 @@ export interface paths {
                   | 'assignments:grade'
                   | 'study-material:read'
                   | 'study-material:manage'
+                  | 'fees:read'
+                  | 'fees:manage'
+                  | 'fees:collect'
+                  | 'fees:report'
+                  | 'payroll:read'
+                  | 'payroll:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -108,6 +119,9 @@ export interface paths {
                   | 'roles:read'
                   | 'roles:manage'
                 )[]
+                features: {
+                  [key: string]: boolean
+                }
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -270,6 +284,11 @@ export interface paths {
                   | 'attendance:mark'
                   | 'attendance:manage'
                   | 'holidays:manage'
+                  | 'calendar:read'
+                  | 'calendar:manage'
+                  | 'certificates:issue'
+                  | 'certificates:read'
+                  | 'data:export'
                   | 'leave:read'
                   | 'leave:request'
                   | 'leave:approve'
@@ -290,6 +309,12 @@ export interface paths {
                   | 'assignments:grade'
                   | 'study-material:read'
                   | 'study-material:manage'
+                  | 'fees:read'
+                  | 'fees:manage'
+                  | 'fees:collect'
+                  | 'fees:report'
+                  | 'payroll:read'
+                  | 'payroll:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -309,6 +334,9 @@ export interface paths {
                   | 'roles:read'
                   | 'roles:manage'
                 )[]
+                features: {
+                  [key: string]: boolean
+                }
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -465,6 +493,11 @@ export interface paths {
                   | 'attendance:mark'
                   | 'attendance:manage'
                   | 'holidays:manage'
+                  | 'calendar:read'
+                  | 'calendar:manage'
+                  | 'certificates:issue'
+                  | 'certificates:read'
+                  | 'data:export'
                   | 'leave:read'
                   | 'leave:request'
                   | 'leave:approve'
@@ -485,6 +518,12 @@ export interface paths {
                   | 'assignments:grade'
                   | 'study-material:read'
                   | 'study-material:manage'
+                  | 'fees:read'
+                  | 'fees:manage'
+                  | 'fees:collect'
+                  | 'fees:report'
+                  | 'payroll:read'
+                  | 'payroll:manage'
                   | 'notifications:send'
                   | 'notifications:read'
                   | 'push:manage'
@@ -504,6 +543,9 @@ export interface paths {
                   | 'roles:read'
                   | 'roles:manage'
                 )[]
+                features: {
+                  [key: string]: boolean
+                }
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -559,6 +601,88 @@ export interface paths {
     }
     put?: never
     post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/auth/change-password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Change your own password
+     * @description The current password is required and verified, not trusted to the session: a phone left unlocked on a desk must not be enough to take someone's account away from them.
+     *
+     *     Refresh tokens are deliberately not revoked — someone changing their password on their own phone should not be signed out of it, and the compromised-account case is what the admin reset path is for.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            currentPassword: string
+            newPassword: string
+          }
+        }
+      }
+      responses: {
+        /** @description Changed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     delete?: never
     options?: never
     head?: never
@@ -1348,8 +1472,16 @@ export interface paths {
     get?: never
     put?: never
     /**
-     * Send a notification to the whole school, all staff, or one class
-     * @description Scope 'class' requires audienceClassId and reaches that class's students plus the guardians linked to them, de-duplicated. Anyone without a login is skipped, so a class where nobody has an account yet reaches nobody rather than failing. Omitting the class is refused rather than falling back to the whole school.
+     * Send or schedule a circular to a chosen audience
+     * @description Audience scopes: school, staff, parents, branch, class, section, batch. A targeted scope must name its target (audienceBranchId, audienceClassId, audienceSectionId, audienceBatchId); a section needs its class as well. Omitting the target is refused rather than falling back to a wider audience.
+     *
+     *     A student-based audience reaches that group's active students plus the guardians linked to them, de-duplicated. Anyone without a login is skipped, so a class where nobody has an account yet reaches nobody rather than failing.
+     *
+     *     A teacher may use only the class and section scopes, and only for a class they hold a published timetable slot for — enforced server-side, not merely hidden in the UI.
+     *
+     *     Set scheduledAt to deliver later; the response is then 202 and the audience is resolved when the job runs, not now. A past time is refused.
+     *
+     *     Send as multipart/form-data with a `file` part to attach one document. Attachments are stored privately and reachable only through a signed, expiring link.
      */
     post: {
       parameters: {
@@ -1363,15 +1495,37 @@ export interface paths {
           'application/json': {
             title: string
             body: string
-            category?: string
             /** @enum {string} */
-            audienceScope: 'school' | 'staff' | 'class'
+            category?:
+              'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+            /** @enum {string} */
+            audienceScope: 'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+            audienceBranchId?: string
             audienceClassId?: string
+            audienceSectionId?: string
+            audienceBatchId?: string
+            /** Format: date-time */
+            scheduledAt?: string | null
+          }
+          'multipart/form-data': {
+            title: string
+            body: string
+            /** @enum {string} */
+            category?:
+              'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+            /** @enum {string} */
+            audienceScope: 'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+            audienceBranchId?: string
+            audienceClassId?: string
+            audienceSectionId?: string
+            audienceBatchId?: string
+            /** Format: date-time */
+            scheduledAt?: string | null
           }
         }
       }
       responses: {
-        /** @description The send summary */
+        /** @description The send summary, for a circular sent now */
         201: {
           headers: {
             [name: string]: unknown
@@ -1383,6 +1537,20 @@ export interface paths {
                 attempted: number
                 succeeded: number
                 failed: number
+              }
+            }
+          }
+        }
+        /** @description Accepted for later delivery */
+        202: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                scheduledAt: string
               }
             }
           }
@@ -1482,9 +1650,17 @@ export interface paths {
                 senderName: string
                 title: string
                 body: string
-                category: string | null
                 /** @enum {string} */
-                audienceScope: 'school' | 'staff' | 'class'
+                category:
+                  'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+                /** @enum {string} */
+                audienceScope:
+                  'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+                attachment: {
+                  contentType: string
+                  originalName: string
+                  byteSize: number
+                } | null
                 readAt: string | null
                 createdAt: string
               }[]
@@ -1666,6 +1842,3903 @@ export interface paths {
         }
       }
     }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/sent': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The signed-in sender's own sent and scheduled circulars, newest first
+     * @description Scoped to the sender, not the school: a teacher sees their own notices rather than every circular the office has issued. A scheduled circular appears here before it goes out, with the time it is due and no send summary yet.
+     */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of sent circulars */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                title: string
+                body: string
+                /** @enum {string} */
+                category:
+                  'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+                /** @enum {string} */
+                status: 'scheduled' | 'sending' | 'sent' | 'cancelled'
+                /** @enum {string} */
+                audienceScope:
+                  'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+                audienceBranchId: string | null
+                audienceClassId: string | null
+                audienceSectionId: string | null
+                audienceBatchId: string | null
+                attachment: {
+                  contentType: string
+                  originalName: string
+                  byteSize: number
+                } | null
+                scheduledAt: string | null
+                sentAt: string | null
+                summary: {
+                  attempted: number
+                  succeeded: number
+                  failed: number
+                  completedAt: string
+                } | null
+                createdAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/{id}/schedule': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /**
+     * Call off a circular that has not gone out yet
+     * @description Only the sender may cancel, and only while it is still scheduled. A circular that has already been sent answers 404 rather than saying so, which would tell a different sender that the id exists.
+     */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Called off */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/{id}/attachment': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A signed, expiring link to a circular's attachment
+     * @description Signed only for the sender or someone the circular was actually sent to. The permission check happens before the link is signed, never after, and the stored path is never returned.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The download link */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                url: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/notifications/preferences': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Which notification categories the signed-in user has muted
+     * @description The muted list, not the allowed one, so an empty array means "send me everything" — the default for anyone who has never opened the setting.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The muted categories */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                mutedCategories: (
+                  'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+                )[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /**
+     * Set which notification categories to mute
+     * @description Muting suppresses the push, not the feed entry: a muted circular is still there when the recipient looks. The `urgent` category cannot be muted — a school closing early has to reach every family.
+     */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            mutedCategories: ('general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events')[]
+          }
+        }
+      }
+      responses: {
+        /** @description The saved muted categories */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                mutedCategories: (
+                  'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
+                )[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/calendar': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The school calendar for a date range: events, holidays and exam dates
+     * @description One calendar merged on read from three sources, each of which stays the single place its facts are kept: school events, the holiday list (which also drives the attendance working-day count), and the dates on a published exam's papers.\n\nA parent or student sees only published events and published exam schedules; the office and teachers also see drafts. Filtering by class keeps school-wide entries, because a parent asking for one class's calendar still wants the public holidays.\n\nThe window is required: without it the read would return everything a school has ever recorded.
+     */
+    get: {
+      parameters: {
+        query?: {
+          from?: string | null
+          to?: string | null
+          classId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The merged calendar, ordered by date */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                /** @enum {string} */
+                kind: 'event' | 'holiday' | 'exam'
+                isPublished: boolean
+                id: string
+                title: string
+                date: string
+                endDate: string | null
+                /** @enum {string|null} */
+                type: 'event' | 'meeting' | 'sports' | 'cultural' | 'trip' | 'other' | null
+                branchId: string | null
+                classId: string | null
+                location: string | null
+                description: string | null
+              }[]
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/calendar/events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Add a school event
+     * @description Draft by default: a school typing up next term should not have each event appear in every parent's portal halfway through. Leave classId unset for a whole-school event, and branchId unset to cover every campus.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            title: string
+            description?: string
+            /**
+             * @default event
+             * @enum {string}
+             */
+            type?: 'event' | 'meeting' | 'sports' | 'cultural' | 'trip' | 'other'
+            /** Format: date-time */
+            startsOn: string | null
+            /** Format: date-time */
+            endsOn?: string | null
+            branchId?: string
+            classId?: string
+            location?: string
+            /** @default false */
+            isPublished?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description The event */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                title: string
+                description: string | null
+                /** @enum {string} */
+                type: 'event' | 'meeting' | 'sports' | 'cultural' | 'trip' | 'other'
+                startsOn: string
+                endsOn: string | null
+                branchId: string | null
+                classId: string | null
+                location: string | null
+                isPublished: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/calendar/events/{eventId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove a school event */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          eventId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /** Change a school event, or publish it */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          eventId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            title?: string
+            description?: string
+            /** @enum {string} */
+            type?: 'event' | 'meeting' | 'sports' | 'cultural' | 'trip' | 'other'
+            /** Format: date-time */
+            startsOn?: string | null
+            /** Format: date-time */
+            endsOn?: string | null
+            branchId?: string | null
+            classId?: string | null
+            location?: string
+            isPublished?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description The updated event */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                title: string
+                description: string | null
+                /** @enum {string} */
+                type: 'event' | 'meeting' | 'sports' | 'cultural' | 'trip' | 'other'
+                startsOn: string
+                endsOn: string | null
+                branchId: string | null
+                classId: string | null
+                location: string | null
+                isPublished: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/certificates': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The certificate issue register, newest first
+     * @description Who issued what, to which student, when, with the serial number. School management only — a register spans every family.
+     */
+    get: {
+      parameters: {
+        query?: {
+          page?: number
+          limit?: number
+          kind?: 'bonafide' | 'character' | 'transfer'
+          studentId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A page of register entries */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                /** @enum {string} */
+                kind: 'bonafide' | 'character' | 'transfer'
+                serialNumber: string
+                studentId: string
+                student: {
+                  name: string
+                  fatherName: string | null
+                  dateOfBirth: string | null
+                  admissionNumber: string
+                  rollNumber: string
+                  className: string | null
+                  sectionName: string | null
+                  admittedOn: string
+                }
+                reason: string | null
+                leavingOn: string | null
+                conduct: string | null
+                issuedByUserId: string
+                issuedAt: string
+              }[]
+              meta: {
+                page: number
+                limit: number
+                total: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Issue a bonafide, character or school leaving certificate
+     * @description The student's details are copied onto the register row as they are at the moment of issue. The PDF is regenerated on demand rather than stored, so without that snapshot a later correction to a student record would silently change what a reprint says while the family already holds the original.\n\nA serial number is assigned from an atomic per-school counter, so two offices issuing at once can never be handed the same number. A leaving certificate must name the day the student last attended.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @enum {string} */
+            kind: 'bonafide' | 'character' | 'transfer'
+            studentId: string
+            reason?: string
+            /** Format: date-time */
+            leavingOn?: string | null
+            conduct?: string
+          }
+        }
+      }
+      responses: {
+        /** @description The issued certificate, as recorded in the register */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                /** @enum {string} */
+                kind: 'bonafide' | 'character' | 'transfer'
+                serialNumber: string
+                studentId: string
+                student: {
+                  name: string
+                  fatherName: string | null
+                  dateOfBirth: string | null
+                  admissionNumber: string
+                  rollNumber: string
+                  className: string | null
+                  sectionName: string | null
+                  admittedOn: string
+                }
+                reason: string | null
+                leavingOn: string | null
+                conduct: string | null
+                issuedByUserId: string
+                issuedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/certificates/{certificateId}/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The certificate as a branded PDF
+     * @description Rendered from the details stored at issue, never from the student record as it stands now. Reachable by school management and by the student's own family: the check is on the student the certificate was issued to, not on a register permission, so the people the document is for are not locked out of it.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          certificateId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/students/{studentId}/documents': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Everything one student can download, for the family's documents screen
+     * @description Issued certificates, fee receipts, and the report cards and admit cards of exams the school has published — gathered from the modules that own each document rather than copied into a list, which would go stale the moment an exam's results were unpublished.
+     *
+     *     Each entry carries the URL of the endpoint that renders it on demand; nothing is stored, so there is no link to expire, and permission is checked when that endpoint is called.
+     *
+     *     Staff see any student in their school and see unpublished exams too; a student sees themselves; a parent sees only a child linked to them. A parent naming another family's child is refused rather than handed a list.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The student's downloadable documents, newest first */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                /** @enum {string} */
+                category: 'certificate' | 'report-card' | 'admit-card' | 'receipt'
+                label: string
+                url: string
+                issuedAt: string | null
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/certificates/templates': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The school's own certificate wording, and the placeholders it may use */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Templates per kind, null where the default wording applies */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                placeholders: string[]
+                templates: {
+                  [key: string]: string | null
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/certificates/templates/{kind}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Set the school's wording for one kind of certificate
+     * @description An empty body clears the template and restores the default wording. Unknown placeholders are refused.
+     */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          kind: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            body: string
+          }
+        }
+      }
+      responses: {
+        /** @description The stored template */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                kind: string
+                body: string | null
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/certificates/{certificateId}/pdf-link': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A signed, expiring link to the stored certificate PDF
+     * @description null for a certificate issued before PDFs were stored; use the streaming endpoint for those.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          certificateId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A signed link, or null */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                url: string | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/dashboards/management': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * School management's dashboard
+     * @description Enrolment by status, today's register, this financial year's billing against what came in, and the last few changes anyone made.\n\nThe fee figures come from the same function as the fee collection report, so the two cannot disagree. `attendanceToday.marked` of 0 means nobody has taken a register yet — at 8am that is the normal state, not a school with nobody present.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The dashboard */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                enrolment: {
+                  active: number
+                  left: number
+                  graduated: number
+                }
+                attendanceToday: {
+                  present: number
+                  absent: number
+                  late: number
+                  leave: number
+                  marked: number
+                }
+                fees: {
+                  billedPaisa: number
+                  collectedPaisa: number
+                  outstandingPaisa: number
+                }
+                recentActivity: {
+                  entityType: string
+                  action: string
+                  actorName: string | null
+                  at: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/dashboards/teacher': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A teacher's own dashboard
+     * @description Today's periods, submissions on their own assignments that nobody has graded, and published exams whose marks are not fully in.\n\nMarking is scoped to assignments they created rather than to their classes: two teachers share a class for different subjects, so a class-wide count would put a colleague's marking on this list. A reopened paper counts as pending, because someone explicitly asked for a correction.\n\nThe staff record is resolved from the session, so an admin with no staff record simply sees no periods rather than an error.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The dashboard */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                periods: {
+                  periodNumber: number
+                  className: string | null
+                  sectionName: string | null
+                  subjectName: string | null
+                  room: string | null
+                }[]
+                submissionsToGrade: number
+                marksPending: {
+                  examId: string
+                  examName: string
+                  papersAwaitingMarks: number
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/dashboards/parent/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One child's day, for the parent portal
+     * @description Today's attendance, what the family owes, and unread notices.\n\nThe child is named in the path because a parent with two children has no single one, and the reader is checked against that student — a parent naming another family's child is refused rather than handed a figure.\n\n`attendanceToday` is null when no register has been taken, not "absent": telling a parent their child is absent because a teacher has not opened the app yet would cause a phone call every morning. A cancelled invoice is excluded from what is owed.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The dashboard */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentId: string
+                studentName: string
+                attendanceToday: string | null
+                feesDuePaisa: number
+                overdueInvoices: number
+                unreadNotices: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/dashboards/student': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A student's own dashboard
+     * @description Today's classes, published homework they have not handed in, and unread notices. The student is resolved from the session, so there is no id for anyone to change. A draft assignment is excluded — that is a teacher still preparing next week.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The dashboard */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                periods: {
+                  periodNumber: number
+                  className: string | null
+                  sectionName: string | null
+                  subjectName: string | null
+                  room: string | null
+                }[]
+                pendingHomework: {
+                  assignmentId: string
+                  title: string
+                  dueAt: string
+                }[]
+                unreadNotices: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exports/school': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The school's own core records, as a ZIP of CSV files
+     * @description For a school that is leaving, or that simply wants its data. Contains students, guardians, staff, attendance, marks, invoices and payments, one CSV each, with a README naming the files and explaining the columns.\n\nCSV rather than a database dump because the point of a leaving export is that it opens without our software: a school office can read a spreadsheet.\n\nDeliberately NOT every collection. Push subscription keys, audit snapshots, password hashes and the school's own encrypted storage secret are excluded — those exist to operate the service rather than being records the school should receive, and shipping them would be a leak dressed up as portability.\n\nStreamed as it is read, so a school with years of attendance does not buffer the whole archive in memory. No schoolId is named: the reads run in the caller's tenant context, so a school can only ever receive its own records.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The archive */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/zip': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exports/data-sets/{name}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One core data set as a CSV
+     * @description For a school that wants its student list rather than the whole leaving archive. Available sets: students, guardians, staff, attendance, marks, invoices, payments.
+     *
+     *     Reuses the same column definitions as the ZIP, so a per-set download and the archive always carry identical columns. An unknown name is a 404 naming the available sets, rather than a blank file a school only notices is wrong later.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          name: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The data set */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/imports/templates/{kind}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A blank CSV template for an import
+     * @description Carries the expected columns and one obviously-example row, so the format of a date or a phone number is visible rather than described. A school starting from this does not discover a wrong column name one upload at a time.\n\nThe student template has no roll or admission number column: both are generated by the school's own atomic counter, so a column for them would invite a value the system then overwrites.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          kind: 'students' | 'staff' | 'marks'
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The template */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/imports/students': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Import students from a CSV file
+     * @description Two phases, in order. The WHOLE file is validated first and every problem reported — a school with ten typos sees all ten and fixes the file once, rather than uploading eleven times.\n\nThen, only if nothing was wrong, the rows are written in ONE transaction. A file with any problem writes nothing at all: a half-imported student list is worse than a failed import, because the school has to work out what landed before it can retry, and a second attempt would duplicate whatever did.\n\nRoll and admission numbers are claimed as blocks from the atomic counter inside that transaction, so a failure part-way cannot burn numbers against students who do not exist.\n\nAnswers 200 with the problems even when nothing was written: the file was understood and found wanting, which is a result rather than a failed request. Read `imported` and `problems`, not the status code. Capped at 500 rows, which completes in about a second and so runs inline rather than through the job queue.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description What was imported, and what was refused */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                imported: number
+                problems: {
+                  line: number
+                  column?: string
+                  message: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/imports/staff': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Import staff from a CSV file
+     * @description Same two-phase contract as the student import: the whole file is validated and every problem reported, then written in one transaction or not at all.
+     *
+     *     Phones are normalised to E.164 before the duplicate check, because a school's spreadsheet holds "0300 123 4567" while the API accepts only "+923001234567" — and the same number written two ways would otherwise pass as two different people. A duplicate within the file is caught as well as one against the existing roster.
+     *
+     *     Employee numbers are claimed as a block from the school counter, so a failure part-way cannot burn numbers against staff who do not exist. The join date defaults to today: a spreadsheet of existing staff rarely carries one, and refusing the file over it would block the import a school actually wants.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description What was imported, and what was refused */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                imported: number
+                problems: {
+                  line: number
+                  column?: string
+                  message: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/imports/marks/{examId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Import marks for one exam from a CSV file
+     * @description Rows name a student by roll number and a paper by subject short code; both are resolved against the exam before anything is written.
+     *
+     *     The marks are saved THROUGH the marks service, one call per paper, rather than written directly — so an import is subject to exactly the rules a teacher typing them would face: a submitted-and-locked paper is refused, a student outside the class is refused, and a score above the paper's maximum is refused. An import able to write past a locked paper would be a way around the lock, not a convenience.
+     *
+     *     Because each paper is its own call, a file spanning three papers is three writes. That is a deliberate trade for keeping one definition of the lock rule; marks are editable by design, unlike a half-created student who would have to be found and deleted.
+     *
+     *     A score and an absence are mutually exclusive: leave the marks column blank for an absentee.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description What was imported, and what was refused */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                imported: number
+                problems: {
+                  line: number
+                  column?: string
+                  message: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/defaulters': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Students with money outstanding on overdue invoices
+     * @description School management only (NOT_SCHOOL_ADMIN). Grouped per student, largest debt first: the office chases a family once about everything they owe.
+     */
+    get: {
+      parameters: {
+        query?: {
+          minOutstandingPaisa?: number
+          classId?: string
+          asOf?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Defaulters */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                studentId: string
+                studentName: string
+                rollNumber: string
+                classId: string | null
+                invoiceCount: number
+                outstandingPaisa: number
+                oldestOverdueDays: number
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/ageing': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Outstanding money grouped by how overdue it is
+     * @description Buckets are 1-30, 31-60, 61-90 and over 90 days. Every unpaid invoice lands in exactly one, so the buckets sum to the total owed.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Ageing */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                bucket: string
+                invoiceCount: number
+                outstandingPaisa: number
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/defaulters/csv': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The fee defaulters report as CSV
+     * @description School management only, like the JSON report it mirrors. Serialised through the shared CSV writer, so a value a spreadsheet would run as a formula is neutralised.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as CSV */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/defaulters/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The fee defaulters report as PDF
+     * @description School management only, like the JSON report it mirrors. Rendered with the school’s own branding.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/ageing/csv': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The outstanding fees by age report as CSV
+     * @description School management only, like the JSON report it mirrors. Serialised through the shared CSV writer, so a value a spreadsheet would run as a formula is neutralised.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as CSV */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/ageing/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The outstanding fees by age report as PDF
+     * @description School management only, like the JSON report it mirrors. Rendered with the school’s own branding.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/collection/csv': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The fee collection report as CSV
+     * @description School management only, like the JSON report it mirrors. Serialised through the shared CSV writer, so a value a spreadsheet would run as a formula is neutralised.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as CSV */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/collection/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The fee collection report as PDF
+     * @description School management only, like the JSON report it mirrors. Rendered with the school’s own branding.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance-reports': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Attendance report for a group over a date range
+     * @description Attendance for a group over a date range, by campus, class or section — name the most specific one; a section wins over its class.\n\nEvery figure comes from the one attendance formula the whole product shares: late and approved leave count as attended, days nobody marked count against, and working days exclude weekends and the campus holiday calendar. A report computing its own percentage would be a second definition, and a parent reading one figure on their portal while the office reads another is exactly what that prevents.\n\n`attendance:read` is held by every portal, because a parent needs it for their own child, so the permission alone does not protect this: school management sees any group, a teacher only a class they are assigned to, and a parent or student is refused.
+     */
+    get: {
+      parameters: {
+        query: {
+          from: string
+          to: string
+          branchId?: string
+          classId?: string
+          sectionId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                from: string
+                to: string
+                workingDays: number
+                thresholdPercent: number
+                rows: {
+                  studentId: string
+                  rollNumber: string
+                  name: string
+                  className: string | null
+                  sectionName: string | null
+                  present: number
+                  absent: number
+                  late: number
+                  leave: number
+                  unmarked: number
+                  workingDays: number
+                  percentage: number
+                  isShort: boolean
+                }[]
+                totals: {
+                  students: number
+                  present: number
+                  absent: number
+                  late: number
+                  leave: number
+                  unmarked: number
+                  percentage: number
+                  shortCount: number
+                }
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance-reports/csv': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The same report as CSV
+     * @description The figures are computed by the same service as the JSON report, so the two cannot disagree about a student. Serialised through the shared CSV writer, so a value a spreadsheet would run as a formula is neutralised.
+     */
+    get: {
+      parameters: {
+        query: {
+          from: string
+          to: string
+          branchId?: string
+          classId?: string
+          sectionId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as CSV */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/attendance-reports/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The same report as PDF
+     * @description The figures are computed by the same service as the JSON report, so the two cannot disagree about a student. Rendered with the school’s own branding.
+     */
+    get: {
+      parameters: {
+        query: {
+          from: string
+          to: string
+          branchId?: string
+          classId?: string
+          sectionId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The report as PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/id-cards/mine': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A student's own ID card
+     * @description The same document the school prints, so the digital card a student shows at the gate matches the physical one.\n\nThe student is resolved from the session, so there is no id to tamper with. The QR encodes the student's attendance token, rendered to an image on the server by an offline generator — the token itself is never returned in a response, because whoever holds one can mark that student present.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The card as a PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/id-cards/class/{classId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A whole class's cards, several to a sheet
+     * @description One render rather than one per student: a school prints a class at once, and separate renders would multiply the memory for a job the renderer caps at four concurrent pages anyway.\n\nNeeds `students:manage` because it reveals every child in the class.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          classId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The card as a PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/id-cards/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One student's ID card
+     * @description Gated on being allowed to see that student rather than on a permission — staff for any student in their school, a student for themselves, a parent for a child linked to them — so a family is not locked out of their own child's card.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The card as a PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -2033,6 +6106,15 @@ export interface paths {
                   type: string
                   status: string
                   usesPlatformStorage: boolean
+                  features: {
+                    payroll: boolean
+                    timetable: boolean
+                    exams: boolean
+                    certificates: boolean
+                    staffAttendance: boolean
+                    leave: boolean
+                    homework: boolean
+                  }
                   contactPerson: string | null
                   phone: string | null
                   address: string | null
@@ -2167,6 +6249,15 @@ export interface paths {
                 type: string
                 status: string
                 usesPlatformStorage: boolean
+                features: {
+                  payroll: boolean
+                  timetable: boolean
+                  exams: boolean
+                  certificates: boolean
+                  staffAttendance: boolean
+                  leave: boolean
+                  homework: boolean
+                }
                 contactPerson: string | null
                 phone: string | null
                 address: string | null
@@ -2262,6 +6353,15 @@ export interface paths {
             phone?: string
             address?: string
             usesPlatformStorage?: boolean
+            features?: {
+              payroll?: boolean
+              timetable?: boolean
+              exams?: boolean
+              certificates?: boolean
+              staffAttendance?: boolean
+              leave?: boolean
+              homework?: boolean
+            }
           }
         }
       }
@@ -2280,6 +6380,15 @@ export interface paths {
                 type: string
                 status: string
                 usesPlatformStorage: boolean
+                features: {
+                  payroll: boolean
+                  timetable: boolean
+                  exams: boolean
+                  certificates: boolean
+                  staffAttendance: boolean
+                  leave: boolean
+                  homework: boolean
+                }
                 contactPerson: string | null
                 phone: string | null
                 address: string | null
@@ -5857,6 +9966,11 @@ export interface paths {
               | 'attendance:mark'
               | 'attendance:manage'
               | 'holidays:manage'
+              | 'calendar:read'
+              | 'calendar:manage'
+              | 'certificates:issue'
+              | 'certificates:read'
+              | 'data:export'
               | 'leave:read'
               | 'leave:request'
               | 'leave:approve'
@@ -5877,6 +9991,12 @@ export interface paths {
               | 'assignments:grade'
               | 'study-material:read'
               | 'study-material:manage'
+              | 'fees:read'
+              | 'fees:manage'
+              | 'fees:collect'
+              | 'fees:report'
+              | 'payroll:read'
+              | 'payroll:manage'
               | 'notifications:send'
               | 'notifications:read'
               | 'push:manage'
@@ -6221,6 +10341,11 @@ export interface paths {
               | 'attendance:mark'
               | 'attendance:manage'
               | 'holidays:manage'
+              | 'calendar:read'
+              | 'calendar:manage'
+              | 'certificates:issue'
+              | 'certificates:read'
+              | 'data:export'
               | 'leave:read'
               | 'leave:request'
               | 'leave:approve'
@@ -6241,6 +10366,12 @@ export interface paths {
               | 'assignments:grade'
               | 'study-material:read'
               | 'study-material:manage'
+              | 'fees:read'
+              | 'fees:manage'
+              | 'fees:collect'
+              | 'fees:report'
+              | 'payroll:read'
+              | 'payroll:manage'
               | 'notifications:send'
               | 'notifications:read'
               | 'push:manage'
@@ -6968,6 +11099,351 @@ export interface paths {
         }
       }
     }
+    trace?: never
+  }
+  '/v1/students/{studentId}/photo': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A short-lived signed link to a student's photo
+     * @description Readable by staff, the student themselves, and a parent of that student. `url` is null when no photo has been uploaded.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A signed link, or null */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                url: string | null
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Upload a student's photo
+     * @description Stored in the school's own Cloudinary account, resized to passport proportions on upload. A school with no storage configured is refused.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'multipart/form-data': {
+            /** Format: binary */
+            file: string
+          }
+        }
+      }
+      responses: {
+        /** @description The updated student */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Remove a student's photo */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description The updated student */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                classId: string | null
+                sectionId: string | null
+                batchIds: string[]
+                admissionYearId: string
+                rollNumber: string
+                admissionNumber: string
+                name: string
+                dateOfBirth: string | null
+                gender: string | null
+                photoAssetId: string | null
+                address: string | null
+                medical: {
+                  bloodGroup: string | null
+                  allergies: string | null
+                  conditions: string | null
+                  emergencyContact: string | null
+                }
+                documents: {
+                  id: string
+                  label: string
+                  assetId: string
+                  uploadedAt: string
+                }[]
+                userId: string | null
+                admittedOn: string
+                status: string
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    patch?: never
     trace?: never
   }
   '/v1/guardians': {
@@ -14287,6 +18763,3077 @@ export interface paths {
     }
     trace?: never
   }
+  '/v1/fee-structures': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Fee structures: heads, amounts and how often each is charged
+     * @description All amounts are in paisa (integer, smallest unit).
+     */
+    get: {
+      parameters: {
+        query?: {
+          academicYearId?: string
+          classId?: string
+          batchId?: string
+          activeOnly?: boolean
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Fee structures */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                classId: string | null
+                batchId: string | null
+                branchId: string | null
+                academicYearId: string
+                items: {
+                  id: string
+                  head: string
+                  amountPaisa: number
+                  /** @enum {string} */
+                  frequency: 'monthly' | 'term' | 'annual' | 'one-time'
+                  isOptional: boolean
+                }[]
+                isActive: boolean
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Create a fee structure for a class or a batch
+     * @description All amounts are in paisa (integer, smallest unit). A structure targets either a class or a batch, never both.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            academicYearId: string
+            classId?: string
+            batchId?: string
+            branchId?: string
+            items: {
+              head: string
+              amountPaisa: number
+              /** @enum {string} */
+              frequency: 'monthly' | 'term' | 'annual' | 'one-time'
+              /** @default false */
+              isOptional?: boolean
+            }[]
+          }
+        }
+      }
+      responses: {
+        /** @description Created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                classId: string | null
+                batchId: string | null
+                branchId: string | null
+                academicYearId: string
+                items: {
+                  id: string
+                  head: string
+                  amountPaisa: number
+                  /** @enum {string} */
+                  frequency: 'monthly' | 'term' | 'annual' | 'one-time'
+                  isOptional: boolean
+                }[]
+                isActive: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-structures/{structureId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /**
+     * Change a fee structure
+     * @description Changing a structure does NOT alter invoices already raised: their lines are copied at the moment of billing, so a parent is never retroactively re-billed.
+     */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          structureId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name?: string
+            items?: {
+              head: string
+              amountPaisa: number
+              /** @enum {string} */
+              frequency: 'monthly' | 'term' | 'annual' | 'one-time'
+              /** @default false */
+              isOptional?: boolean
+            }[]
+            isActive?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                name: string
+                classId: string | null
+                batchId: string | null
+                branchId: string | null
+                academicYearId: string
+                items: {
+                  id: string
+                  head: string
+                  amountPaisa: number
+                  /** @enum {string} */
+                  frequency: 'monthly' | 'term' | 'annual' | 'one-time'
+                  isOptional: boolean
+                }[]
+                isActive: boolean
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/fee-discounts': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Grant a discount or scholarship to one student
+     * @description The reason is required and the approver is taken from the session: a concession is money the school chose not to collect, and an audit asks who agreed and why. Omit `head` to discount the whole invoice, or name one to discount only that fee.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentId: string
+            /** @enum {string} */
+            kind: 'percent' | 'fixed'
+            value: number
+            head?: string
+            reason: string
+            academicYearId: string
+          }
+        }
+      }
+      responses: {
+        /** @description Granted */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                /** @enum {string} */
+                kind: 'percent' | 'fixed'
+                value: number
+                head: string | null
+                reason: string
+                academicYearId: string
+                isRevoked: boolean
+                revokedReason: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-discounts/{discountId}/revocation': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Revoke a discount, with a reason
+     * @description Revoked, never deleted: the discount explains why an invoice already raised was lower than the structure, and removing it would make that invoice unexplainable.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          discountId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            reason: string
+          }
+        }
+      }
+      responses: {
+        /** @description Revoked */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                /** @enum {string} */
+                kind: 'percent' | 'fixed'
+                value: number
+                head: string | null
+                reason: string
+                academicYearId: string
+                isRevoked: boolean
+                revokedReason: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-ledger/{studentId}/discounts': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** A student's discounts for an academic year */
+    get: {
+      parameters: {
+        query: {
+          academicYearId: string
+        }
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Discounts */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                /** @enum {string} */
+                kind: 'percent' | 'fixed'
+                value: number
+                head: string | null
+                reason: string
+                academicYearId: string
+                isRevoked: boolean
+                revokedReason: string | null
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/invoices': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Invoices, filtered by student, class, period or fiscal year
+     * @description Cancelled invoices are excluded. All amounts are paisa.
+     */
+    get: {
+      parameters: {
+        query?: {
+          studentId?: string
+          classId?: string
+          period?: string
+          fiscalYear?: string
+          unpaidOnly?: boolean
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Invoices */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                invoiceNumber: string
+                fiscalYear: string
+                studentId: string
+                classId: string | null
+                period: string
+                issuedOn: string
+                dueOn: string
+                lines: {
+                  id: string
+                  head: string
+                  amountPaisa: number
+                  discountPaisa: number
+                  netPaisa: number
+                }[]
+                grossPaisa: number
+                discountPaisa: number
+                netPaisa: number
+                paidPaisa: number
+                balancePaisa: number
+                isCancelled: boolean
+                cancelledReason: string | null
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Raise invoices for a list of students or a whole class
+     * @description Numbers are gapless per school per fiscal year, issued by an atomic counter inside the same transaction as the insert. A student who cannot be billed is SKIPPED and reported rather than failing the run: generating for 800 students must not abort on the one child whose class was never set. Reasons are NO_FEE_STRUCTURE, STUDENT_NOT_IN_CLASS and ALREADY_INVOICED.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentIds?: string[]
+            classId?: string
+            academicYearId: string
+            period: string
+            issuedOn: string
+            dueOn: string
+            optionalHeadsToCharge?: string[]
+          }
+        }
+      }
+      responses: {
+        /** @description What was created and what was skipped */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                created: {
+                  id: string
+                  invoiceNumber: string
+                  fiscalYear: string
+                  studentId: string
+                  classId: string | null
+                  period: string
+                  issuedOn: string
+                  dueOn: string
+                  lines: {
+                    id: string
+                    head: string
+                    amountPaisa: number
+                    discountPaisa: number
+                    netPaisa: number
+                  }[]
+                  grossPaisa: number
+                  discountPaisa: number
+                  netPaisa: number
+                  paidPaisa: number
+                  balancePaisa: number
+                  isCancelled: boolean
+                  cancelledReason: string | null
+                  createdAt: string
+                }[]
+                skipped: {
+                  studentId: string
+                  reason: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/invoices/{invoiceId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** One invoice with its payments and balance */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          invoiceId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Invoice with balance */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                invoice: {
+                  id: string
+                  invoiceNumber: string
+                  fiscalYear: string
+                  studentId: string
+                  classId: string | null
+                  period: string
+                  issuedOn: string
+                  dueOn: string
+                  lines: {
+                    id: string
+                    head: string
+                    amountPaisa: number
+                    discountPaisa: number
+                    netPaisa: number
+                  }[]
+                  grossPaisa: number
+                  discountPaisa: number
+                  netPaisa: number
+                  paidPaisa: number
+                  balancePaisa: number
+                  isCancelled: boolean
+                  cancelledReason: string | null
+                  createdAt: string
+                }
+                payments: {
+                  id: string
+                  invoiceId: string
+                  studentId: string
+                  receiptNumber: string
+                  amountPaisa: number
+                  /** @enum {string} */
+                  method: 'cash' | 'cheque' | 'bank-transfer' | 'other'
+                  reference: string
+                  paidOn: string
+                  note: string
+                  isReversal: boolean
+                  reversesPaymentId: string | null
+                  reversalReason: string | null
+                  createdAt: string
+                }[]
+                balancePaisa: number
+                isOverdue: boolean
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/invoices/{invoiceId}/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The invoice as a branded PDF */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          invoiceId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/invoices/{invoiceId}/cancellation': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Cancel an invoice, with a reason
+     * @description Cancelled, never deleted, so an issued number stays accounted for and the sequence does not read as having a gap. Refused with INVOICE_HAS_PAYMENTS when money has been recorded against it — reverse the payments first, so both decisions stay visible.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          invoiceId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            reason: string
+          }
+        }
+      }
+      responses: {
+        /** @description Cancelled */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                invoiceNumber: string
+                fiscalYear: string
+                studentId: string
+                classId: string | null
+                period: string
+                issuedOn: string
+                dueOn: string
+                lines: {
+                  id: string
+                  head: string
+                  amountPaisa: number
+                  discountPaisa: number
+                  netPaisa: number
+                }[]
+                grossPaisa: number
+                discountPaisa: number
+                netPaisa: number
+                paidPaisa: number
+                balancePaisa: number
+                isCancelled: boolean
+                cancelledReason: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/invoices/{invoiceId}/payments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Record a payment the school has received
+     * @description This module records money; it never moves money. There is no gateway and no card data. The payment row and the invoice balance are written in one MongoDB transaction, so one can never exist without the other. Overpayment is refused with PAYMENT_EXCEEDS_BALANCE rather than absorbed: a school that took more than was owed needs to decide on a credit or a refund, and recording it silently would hide that.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          invoiceId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            amountPaisa: number
+            /** @enum {string} */
+            method: 'cash' | 'cheque' | 'bank-transfer' | 'other'
+            /** @default  */
+            reference?: string
+            paidOn: string
+            /** @default  */
+            note?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Recorded */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                invoiceId: string
+                studentId: string
+                receiptNumber: string
+                amountPaisa: number
+                /** @enum {string} */
+                method: 'cash' | 'cheque' | 'bank-transfer' | 'other'
+                reference: string
+                paidOn: string
+                note: string
+                isReversal: boolean
+                reversesPaymentId: string | null
+                reversalReason: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payments/{paymentId}/reversal': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Reverse a payment, with a required reason
+     * @description A payment is NEVER edited and NEVER deleted — there is no such route. A mistake is corrected by this linked negative entry, so the original stays visible and a parent sees what happened rather than money silently vanishing. A unique index makes a double reversal impossible even under concurrent requests (PAYMENT_ALREADY_REVERSED), and a reversal cannot itself be reversed (CANNOT_REVERSE_REVERSAL).
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          paymentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            reason: string
+          }
+        }
+      }
+      responses: {
+        /** @description Reversed */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                invoiceId: string
+                studentId: string
+                receiptNumber: string
+                amountPaisa: number
+                /** @enum {string} */
+                method: 'cash' | 'cheque' | 'bank-transfer' | 'other'
+                reference: string
+                paidOn: string
+                note: string
+                isReversal: boolean
+                reversesPaymentId: string | null
+                reversalReason: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payments/{paymentId}/receipt': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The receipt as a branded PDF
+     * @description A reversal gets a document too, headed "Payment reversal" with the reason printed — without one, a family discovers a bounced cheque only when the next invoice looks wrong.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          paymentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF, rendered on demand and never stored */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-ledger/{studentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * A student's full fee ledger: every invoice, its payments and its balance
+     * @description What a parent reads and what the office reconciles against, from the same place, so the two cannot disagree. A parent may read only a linked child.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          studentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Ledger */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                invoice: {
+                  id: string
+                  invoiceNumber: string
+                  fiscalYear: string
+                  studentId: string
+                  classId: string | null
+                  period: string
+                  issuedOn: string
+                  dueOn: string
+                  lines: {
+                    id: string
+                    head: string
+                    amountPaisa: number
+                    discountPaisa: number
+                    netPaisa: number
+                  }[]
+                  grossPaisa: number
+                  discountPaisa: number
+                  netPaisa: number
+                  paidPaisa: number
+                  balancePaisa: number
+                  isCancelled: boolean
+                  cancelledReason: string | null
+                  createdAt: string
+                }
+                payments: {
+                  id: string
+                  invoiceId: string
+                  studentId: string
+                  receiptNumber: string
+                  amountPaisa: number
+                  /** @enum {string} */
+                  method: 'cash' | 'cheque' | 'bank-transfer' | 'other'
+                  reference: string
+                  paidOn: string
+                  note: string
+                  isReversal: boolean
+                  reversesPaymentId: string | null
+                  reversalReason: string | null
+                  createdAt: string
+                }[]
+                balancePaisa: number
+                isOverdue: boolean
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/fee-reports/collection': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Collected against billed, by period, class or fee head
+     * @description Collection per head is apportioned by each line’s share of the invoice, since a payment is recorded against an invoice rather than a particular fee. Reconciles with the parent ledger by construction, because both read the same running totals.
+     */
+    get: {
+      parameters: {
+        query?: {
+          groupBy?: 'period' | 'class' | 'head'
+          fiscalYear?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Collection */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                key: string
+                billedPaisa: number
+                collectedPaisa: number
+                outstandingPaisa: number
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payroll-policy': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Whether unpaid absence reduces pay, and how
+     * @description Created on first read with deductions OFF: a school paying a fixed monthly salary regardless of attendance would otherwise see wrong slips from the first run, and silently docking pay a school never agreed to is the worst possible default.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Payroll policy */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                deductForUnpaidAbsence: boolean
+                fixedDaysPerMonth: number | null
+                graceDays: number
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /**
+     * Turn absence deductions on or off and set the rule
+     * @description A day's pay is basic divided by working days by default; `fixedDaysPerMonth` (commonly 26 or 30) stops a short month making each absent day cost more. `graceDays` absorbs the odd half-day a school does not chase. Approved leave never costs pay, and allowances are never pro-rated.
+     */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            deductForUnpaidAbsence: boolean
+            /** @default null */
+            fixedDaysPerMonth?: number | null
+            /** @default 0 */
+            graceDays?: number
+          }
+        }
+      }
+      responses: {
+        /** @description Updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                deductForUnpaidAbsence: boolean
+                fixedDaysPerMonth: number | null
+                graceDays: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/salary-structures': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Set a salary structure: basic, allowances and deductions
+     * @description Payroll is tracking only, consistent with the fee module: it records what is owed and does not move money. There is no disbursement integration. All amounts are paisa. Structures are versioned by `effectiveFrom` rather than overwritten, so a past payroll can still be explained after a raise.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            staffId: string
+            basicPaisa: number
+            /** @default [] */
+            components?: {
+              name: string
+              /** @enum {string} */
+              kind: 'allowance' | 'deduction'
+              amountPaisa: number
+            }[]
+            effectiveFrom: string
+            /** @default  */
+            note?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                staffId: string
+                basicPaisa: number
+                components: {
+                  id: string
+                  name: string
+                  /** @enum {string} */
+                  kind: 'allowance' | 'deduction'
+                  amountPaisa: number
+                }[]
+                effectiveFrom: string
+                note: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/salary-structures/{staffId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * One staff member's salary structures, newest first
+     * @description A teacher may read only their own: naming another staff member is refused with NOT_YOUR_PAYSLIP rather than silently returning their own record.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          staffId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Salary structures */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                staffId: string
+                basicPaisa: number
+                components: {
+                  id: string
+                  name: string
+                  /** @enum {string} */
+                  kind: 'allowance' | 'deduction'
+                  amountPaisa: number
+                }[]
+                effectiveFrom: string
+                note: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payroll-runs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Payroll runs, newest first */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Runs */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                period: string
+                runOn: string
+                slipCount: number
+                totalNetPaisa: number
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /**
+     * Run payroll for a month, producing one slip per staff member
+     * @description Payroll is tracking only, consistent with the fee module: it records what is owed and does not move money. There is no disbursement integration. All amounts are paisa. A staff member with no salary structure is SKIPPED and reported rather than failing the run: payroll for sixty people must not be blocked by the one new joiner whose salary was never entered. A second run for the same month is refused with PAYROLL_ALREADY_RUN, since double-paying is the obvious failure mode. The structure in force on the last day of the period is the one used, so a mid-month raise takes effect that month.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            period: string
+            runOn: string
+            staffIds?: string[]
+          }
+        }
+      }
+      responses: {
+        /** @description What was produced and what was skipped */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                run: {
+                  id: string
+                  period: string
+                  runOn: string
+                  slipCount: number
+                  totalNetPaisa: number
+                }
+                slips: {
+                  id: string
+                  runId: string
+                  staffId: string
+                  period: string
+                  basicPaisa: number
+                  lines: {
+                    id: string
+                    name: string
+                    /** @enum {string} */
+                    kind: 'allowance' | 'deduction'
+                    amountPaisa: number
+                    isComputed: boolean
+                  }[]
+                  allowancePaisa: number
+                  deductionPaisa: number
+                  netPaisa: number
+                  workingDays: number
+                  presentDays: number
+                  unpaidAbsentDays: number
+                  note: string
+                  createdAt: string
+                }[]
+                skipped: {
+                  staffId: string
+                  reason: string
+                }[]
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payslips': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Salary slips; a teacher sees only their own
+     * @description A teacher omits staffId and reads their own slips, resolved from the session. Naming another staff member is refused with NOT_YOUR_PAYSLIP. A school admin may name any staff member.
+     */
+    get: {
+      parameters: {
+        query?: {
+          staffId?: string
+          period?: string
+          runId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Payslips */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                runId: string
+                staffId: string
+                period: string
+                basicPaisa: number
+                lines: {
+                  id: string
+                  name: string
+                  /** @enum {string} */
+                  kind: 'allowance' | 'deduction'
+                  amountPaisa: number
+                  isComputed: boolean
+                }[]
+                allowancePaisa: number
+                deductionPaisa: number
+                netPaisa: number
+                workingDays: number
+                presentDays: number
+                unpaidAbsentDays: number
+                note: string
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/payslips/{payslipId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** One salary slip */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          payslipId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Payslip */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                runId: string
+                staffId: string
+                period: string
+                basicPaisa: number
+                lines: {
+                  id: string
+                  name: string
+                  /** @enum {string} */
+                  kind: 'allowance' | 'deduction'
+                  amountPaisa: number
+                  isComputed: boolean
+                }[]
+                allowancePaisa: number
+                deductionPaisa: number
+                netPaisa: number
+                workingDays: number
+                presentDays: number
+                unpaidAbsentDays: number
+                note: string
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /**
+     * Correct a slip
+     * @description Slips stay editable — a school asked for that — and every change is recorded by the audit log, so a salary dispute can still be settled even though the slip is corrected in place. Totals are RECOMPUTED from the lines rather than taken from the request, so a client cannot send a net that disagrees with its own lines.
+     */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          payslipId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            basicPaisa?: number
+            lines?: {
+              name: string
+              /** @enum {string} */
+              kind: 'allowance' | 'deduction'
+              amountPaisa: number
+              /** @default false */
+              isComputed?: boolean
+            }[]
+            note?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Corrected */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                runId: string
+                staffId: string
+                period: string
+                basicPaisa: number
+                lines: {
+                  id: string
+                  name: string
+                  /** @enum {string} */
+                  kind: 'allowance' | 'deduction'
+                  amountPaisa: number
+                  isComputed: boolean
+                }[]
+                allowancePaisa: number
+                deductionPaisa: number
+                netPaisa: number
+                workingDays: number
+                presentDays: number
+                unpaidAbsentDays: number
+                note: string
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/payslips/{payslipId}/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * The salary slip as a branded PDF
+     * @description Rendered on demand and never stored, so a slip is always current. The scope check runs before anything is rendered, so a teacher asking for a colleague’s slip never reaches the document.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          payslipId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description A branded PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/v1/attendance/staff': {
     parameters: {
       query?: never
@@ -17258,6 +24805,200 @@ export interface paths {
         }
         /** @description Conflict with the current state */
         409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/analytics/csv': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Class performance as CSV
+     * @description The same figures as the JSON analytics, so a download and the screen it came from cannot disagree. Staff only, inherited from the same service.
+     *
+     *     Absentees are excluded from every figure — an absence is not a zero — and the absent count is its own column so a reader can judge whether an average of four students means anything.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class performance as CSV */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'text/csv': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/exams/{examId}/analytics/pdf': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Class performance as PDF
+     * @description The same figures as the JSON analytics, so a download and the screen it came from cannot disagree. Staff only, inherited from the same service.
+     *
+     *     Absentees are excluded from every figure — an absence is not a zero — and the absent count is its own column so a reader can judge whether an average of four students means anything.
+     */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          examId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Class performance as PDF */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/pdf': string
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
           headers: {
             [name: string]: unknown
           }
