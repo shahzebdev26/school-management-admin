@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { PhoneField } from '@/components/form/phone-field'
 import { TextField } from '@/components/form/text-field'
+import { useServerFieldErrors } from '@/components/form/use-server-field-errors'
+import { ApiError } from '@/lib/api/errors'
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
 import { ErrorState } from '@/components/shared/error-state'
 import { Screen } from '@/components/shared/screen'
@@ -52,16 +54,9 @@ function SchoolInfoDisplay({ school }: { school: SchoolData }) {
   )
 }
 
-function SchoolEditForm({
-  id,
-  school,
-  onDone,
-}: {
-  id: string
-  school: SchoolData
-  onDone: () => void
-}) {
+function useSchoolEditForm(id: string, school: SchoolData, onDone: () => void) {
   const updateMutation = useUpdateSchoolMutation(id)
+  const [formError, setFormError] = useState<string | null>(null)
   const form = useForm<UpdateSchoolFormValues, unknown, UpdateSchoolInput>({
     resolver: zodResolver(updateSchoolSchema),
     values: {
@@ -72,14 +67,47 @@ function SchoolEditForm({
     },
   })
 
+  const mapServerFieldErrors = useServerFieldErrors(form.setError, [
+    'name',
+    'contactPerson',
+    'phone',
+    'address',
+  ] as const)
+
   const onSubmit = form.handleSubmit((values) => {
+    setFormError(null)
     updateMutation.mutate(values, {
       onSuccess: () => {
         toast.success('School updated')
         onDone()
       },
+      onError: (error) => {
+        if (error instanceof ApiError) {
+          const messages = mapServerFieldErrors(error)
+          const primaryMessage = messages[0] ?? error.message
+          setFormError(primaryMessage)
+          toast.error(primaryMessage)
+          return
+        }
+        setFormError('Could not update school. Please try again.')
+        toast.error('Could not update school. Please try again.')
+      },
     })
   })
+
+  return { form, formError, onSubmit, isPending: updateMutation.isPending }
+}
+
+function SchoolEditForm({
+  id,
+  school,
+  onDone,
+}: {
+  id: string
+  school: SchoolData
+  onDone: () => void
+}) {
+  const { form, formError, onSubmit, isPending } = useSchoolEditForm(id, school, onDone)
 
   return (
     <form
@@ -88,13 +116,18 @@ function SchoolEditForm({
       }}
       className="flex flex-col gap-4"
     >
+      {formError ? (
+        <p role="alert" className="text-sm font-semibold text-destructive-text">
+          {formError}
+        </p>
+      ) : null}
       <TextField control={form.control} name="name" label="Name" required />
       <TextField control={form.control} name="contactPerson" label="Contact person" required />
       <PhoneField control={form.control} name="phone" required />
       <TextField control={form.control} name="address" label="Address" required />
       <div className="flex gap-2">
-        <Button type="submit" size="sm" disabled={updateMutation.isPending}>
-          {updateMutation.isPending ? 'Saving…' : 'Save'}
+        <Button type="submit" size="sm" disabled={isPending}>
+          {isPending ? 'Saving…' : 'Save'}
         </Button>
         <Button
           type="button"

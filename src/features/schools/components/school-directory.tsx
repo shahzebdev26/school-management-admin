@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { DataTableColumn } from '@/components/shared/data-table.types'
+import { TableActionButton, TableActionGroup } from '@/components/shared/data-table-actions'
 import { useSchoolsQuery, type SchoolListItem } from '../api/use-schools-query'
 
 const PAGE_SIZE = 20
@@ -64,6 +65,20 @@ const COLUMNS: DataTableColumn<SchoolListItem>[] = [
     id: 'created',
     header: 'Created',
     cell: (row) => new Date(row.createdAt).toLocaleDateString(),
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    widthClass: 'w-24 text-right',
+    cell: (row) => (
+      <TableActionGroup>
+        <TableActionButton asChild variant="outline" size="xs">
+          <Link href={`/dashboard/schools/${row.id}`} aria-label={`Manage ${row.name}`}>
+            Manage
+          </Link>
+        </TableActionButton>
+      </TableActionGroup>
+    ),
   },
 ]
 

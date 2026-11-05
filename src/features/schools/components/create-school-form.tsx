@@ -27,7 +27,15 @@ import {
   type CreateSchoolInput,
 } from '../schemas/create-school-schema'
 
-const KNOWN_FIELDS = ['name', 'slug', 'type', 'contactPerson', 'phone', 'address'] as const
+const KNOWN_FIELDS = [
+  'name',
+  'slug',
+  'type',
+  'adminEmail',
+  'contactPerson',
+  'phone',
+  'address',
+] as const
 
 const TYPE_OPTIONS = [
   { value: 'school', label: 'School' },
@@ -36,7 +44,7 @@ const TYPE_OPTIONS = [
 ]
 
 interface Credentials {
-  phone: string
+  email: string
   password: string
 }
 
@@ -47,7 +55,7 @@ function CredentialsDialog({
   credentials: Credentials
   onClose: () => void
 }) {
-  const text = `Phone: ${credentials.phone}\nPassword: ${credentials.password}`
+  const text = `Email: ${credentials.email}\nPassword: ${credentials.password}`
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -64,7 +72,7 @@ function CredentialsDialog({
         </div>
         <div className="space-y-2 rounded-lg bg-muted p-4 text-sm font-medium">
           <p>
-            <span className="font-bold">Phone:</span> {credentials.phone}
+            <span className="font-bold">Email:</span> {credentials.email}
           </p>
           <p>
             <span className="font-bold">Password:</span> {credentials.password}
@@ -105,7 +113,7 @@ function useSchoolFormSubmit(opts: {
     mutation.mutate(values, {
       onSuccess: (result) => {
         setCredentials({
-          phone: result.data.adminCredentials.phone,
+          email: result.data.adminCredentials.email,
           password: result.data.adminCredentials.temporaryPassword,
         })
         form.reset()
@@ -160,6 +168,14 @@ function SchoolFormFields({
         options={TYPE_OPTIONS}
         required
       />
+      <TextField
+        control={form.control}
+        name="adminEmail"
+        label="Admin email"
+        type="email"
+        description="The login for the school's first admin account"
+        required
+      />
       <TextField control={form.control} name="contactPerson" label="Contact person" required />
       <PhoneField control={form.control} name="phone" required />
       <TextField control={form.control} name="address" label="Address" required />
@@ -180,6 +196,7 @@ export function CreateSchoolForm() {
       name: '',
       slug: '',
       type: 'school',
+      adminEmail: '',
       contactPerson: '',
       phone: '',
       address: '',

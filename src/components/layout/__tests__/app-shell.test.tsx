@@ -17,6 +17,7 @@ const SESSION: Session = {
   schoolId: null,
   permissions: [],
   features: {},
+  mustChangePassword: false,
   impersonation: null,
 }
 

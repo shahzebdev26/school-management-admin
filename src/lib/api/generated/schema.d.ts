@@ -14,8 +14,8 @@ export interface paths {
     get?: never
     put?: never
     /**
-     * Sign in (school user: phone+password, platform admin: email+password)
-     * @description On a school subdomain this signs in a school user with phone+password; on admin.<domain> it signs in a platform admin with email+password.
+     * Sign in with email and password
+     * @description On a school subdomain this signs in a school user; on admin.<domain> it signs in a platform admin. Both use email+password.
      */
     post: {
       parameters: {
@@ -28,7 +28,8 @@ export interface paths {
         content: {
           'application/json':
             | {
-                phone: string
+                /** Format: email */
+                email: string
                 password: string
               }
             | {
@@ -60,6 +61,9 @@ export interface paths {
                   | 'students:manage'
                   | 'guardians:read'
                   | 'guardians:manage'
+                  | 'discipline:read'
+                  | 'discipline:record'
+                  | 'discipline:manage'
                   | 'staff:read'
                   | 'staff:manage'
                   | 'school-users:manage'
@@ -122,6 +126,7 @@ export interface paths {
                 features: {
                   [key: string]: boolean
                 }
+                mustChangePassword: boolean
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -275,6 +280,9 @@ export interface paths {
                   | 'students:manage'
                   | 'guardians:read'
                   | 'guardians:manage'
+                  | 'discipline:read'
+                  | 'discipline:record'
+                  | 'discipline:manage'
                   | 'staff:read'
                   | 'staff:manage'
                   | 'school-users:manage'
@@ -337,6 +345,7 @@ export interface paths {
                 features: {
                   [key: string]: boolean
                 }
+                mustChangePassword: boolean
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -484,6 +493,9 @@ export interface paths {
                   | 'students:manage'
                   | 'guardians:read'
                   | 'guardians:manage'
+                  | 'discipline:read'
+                  | 'discipline:record'
+                  | 'discipline:manage'
                   | 'staff:read'
                   | 'staff:manage'
                   | 'school-users:manage'
@@ -546,6 +558,7 @@ export interface paths {
                 features: {
                   [key: string]: boolean
                 }
+                mustChangePassword: boolean
                 impersonation: {
                   depth: 1 | 2
                   realName: string
@@ -1655,7 +1668,14 @@ export interface paths {
                   'urgent' | 'general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events'
                 /** @enum {string} */
                 audienceScope:
-                  'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+                  | 'school'
+                  | 'staff'
+                  | 'parents'
+                  | 'branch'
+                  | 'class'
+                  | 'section'
+                  | 'batch'
+                  | 'direct'
                 attachment: {
                   contentType: string
                   originalName: string
@@ -1889,7 +1909,14 @@ export interface paths {
                 status: 'scheduled' | 'sending' | 'sent' | 'cancelled'
                 /** @enum {string} */
                 audienceScope:
-                  'school' | 'staff' | 'parents' | 'branch' | 'class' | 'section' | 'batch'
+                  | 'school'
+                  | 'staff'
+                  | 'parents'
+                  | 'branch'
+                  | 'class'
+                  | 'section'
+                  | 'batch'
+                  | 'direct'
                 audienceBranchId: string | null
                 audienceClassId: string | null
                 audienceSectionId: string | null
@@ -2224,7 +2251,7 @@ export interface paths {
       requestBody?: {
         content: {
           'application/json': {
-            mutedCategories: ('general' | 'attendance' | 'fees' | 'exams' | 'homework' | 'events')[]
+            mutedCategories: ('general' | 'fees' | 'exams' | 'homework' | 'events')[]
           }
         }
       }
@@ -4531,6 +4558,110 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/v1/fee-reports/reminders': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Remind the parents of students with overdue or soon-due fees
+     * @description School management only (NOT_SCHOOL_ADMIN). Covers invoices overdue or due within 7 days, one notice per student to their linked guardians. Optionally limited to one class.
+     */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            classId?: string
+          }
+        }
+      }
+      responses: {
+        /** @description How many families were reminded */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                remindedStudents: number
+                failed: number
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/v1/fee-reports/defaulters': {
     parameters: {
       query?: never
@@ -5564,11 +5695,13 @@ export interface paths {
     }
     /**
      * A whole class's cards, several to a sheet
-     * @description One render rather than one per student: a school prints a class at once, and separate renders would multiply the memory for a job the renderer caps at four concurrent pages anyway.\n\nNeeds `students:manage` because it reveals every child in the class.
+     * @description One render rather than one per student: a school prints a class at once, and separate renders would multiply the memory for a job the renderer caps at four concurrent pages anyway.\n\nNeeds `students:manage` because it reveals every child in the class. Pass `sectionId` to print one section only.
      */
     get: {
       parameters: {
-        query?: never
+        query?: {
+          sectionId?: string
+        }
         header?: never
         path: {
           classId: string
@@ -6084,6 +6217,8 @@ export interface paths {
             slug: string
             /** @enum {string} */
             type: 'school' | 'coaching' | 'tuition'
+            /** Format: email */
+            adminEmail: string
             contactPerson?: string
             phone?: string
             address?: string
@@ -6129,7 +6264,7 @@ export interface paths {
                   updatedAt: string
                 }
                 adminCredentials: {
-                  phone: string
+                  email: string
                   temporaryPassword: string
                 }
               }
@@ -8963,6 +9098,7 @@ export interface paths {
                   id: string
                   subjectId: string
                 }[]
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9032,6 +9168,7 @@ export interface paths {
             }[]
             /** @default [] */
             subjectIds?: string[]
+            periodTemplateId?: string
           }
         }
       }
@@ -9058,6 +9195,7 @@ export interface paths {
                   id: string
                   subjectId: string
                 }[]
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9186,6 +9324,7 @@ export interface paths {
                   id: string
                   subjectId: string
                 }[]
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9274,8 +9413,10 @@ export interface paths {
             sections?: {
               name: string
               capacity?: number
+              id?: string
             }[]
             subjectIds?: string[]
+            periodTemplateId?: string | null
             isActive?: boolean
           }
         }
@@ -9303,6 +9444,7 @@ export interface paths {
                   id: string
                   subjectId: string
                 }[]
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9439,6 +9581,7 @@ export interface paths {
                   subjectId: string
                 }[]
                 capacity: number | null
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9503,6 +9646,7 @@ export interface paths {
             /** @default [] */
             subjectIds?: string[]
             capacity?: number
+            periodTemplateId?: string
           }
         }
       }
@@ -9525,6 +9669,7 @@ export interface paths {
                   subjectId: string
                 }[]
                 capacity: number | null
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9649,6 +9794,7 @@ export interface paths {
                   subjectId: string
                 }[]
                 capacity: number | null
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9736,6 +9882,7 @@ export interface paths {
             description?: string | null
             subjectIds?: string[]
             capacity?: number | null
+            periodTemplateId?: string | null
             isActive?: boolean
           }
         }
@@ -9759,6 +9906,7 @@ export interface paths {
                   subjectId: string
                 }[]
                 capacity: number | null
+                periodTemplateId: string | null
                 isActive: boolean
                 createdAt: string
                 updatedAt: string
@@ -9957,6 +10105,9 @@ export interface paths {
               | 'students:manage'
               | 'guardians:read'
               | 'guardians:manage'
+              | 'discipline:read'
+              | 'discipline:record'
+              | 'discipline:manage'
               | 'staff:read'
               | 'staff:manage'
               | 'school-users:manage'
@@ -10332,6 +10483,9 @@ export interface paths {
               | 'students:manage'
               | 'guardians:read'
               | 'guardians:manage'
+              | 'discipline:read'
+              | 'discipline:record'
+              | 'discipline:manage'
               | 'staff:read'
               | 'staff:manage'
               | 'school-users:manage'
@@ -10551,6 +10705,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -10638,6 +10793,8 @@ export interface paths {
             batchIds?: string[]
             admissionYearId: string
             name: string
+            /** Format: email */
+            email?: string
             /** Format: date-time */
             dateOfBirth?: string | null
             /** @enum {string} */
@@ -10679,6 +10836,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -10838,6 +10996,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -10942,6 +11101,8 @@ export interface paths {
             sectionId?: string | null
             batchIds?: string[]
             name?: string
+            /** Format: email */
+            email?: string | null
             /** Format: date-time */
             dateOfBirth?: string | null
             /** @enum {string} */
@@ -10982,6 +11143,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -11232,6 +11394,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -11360,6 +11523,7 @@ export interface paths {
                 rollNumber: string
                 admissionNumber: string
                 name: string
+                email: string | null
                 dateOfBirth: string | null
                 gender: string | null
                 photoAssetId: string | null
@@ -12188,7 +12352,6 @@ export interface paths {
       parameters: {
         query?: {
           branchId?: string
-          classId?: string
           subjectId?: string
           status?: string
           search?: string
@@ -12226,12 +12389,6 @@ export interface paths {
                   year: number | null
                 }[]
                 subjectIds: string[]
-                classAssignments: {
-                  id: string
-                  classId: string
-                  sectionId: string | null
-                }[]
-                batchIds: string[]
                 status: string
                 createdAt: string
                 updatedAt: string
@@ -12312,13 +12469,6 @@ export interface paths {
             }[]
             /** @default [] */
             subjectIds?: string[]
-            /** @default [] */
-            classAssignments?: {
-              classId: string
-              sectionId?: string
-            }[]
-            /** @default [] */
-            batchIds?: string[]
           }
         }
       }
@@ -12348,12 +12498,6 @@ export interface paths {
                   year: number | null
                 }[]
                 subjectIds: string[]
-                classAssignments: {
-                  id: string
-                  classId: string
-                  sectionId: string | null
-                }[]
-                batchIds: string[]
                 status: string
                 createdAt: string
                 updatedAt: string
@@ -12503,12 +12647,6 @@ export interface paths {
                   year: number | null
                 }[]
                 subjectIds: string[]
-                classAssignments: {
-                  id: string
-                  classId: string
-                  sectionId: string | null
-                }[]
-                batchIds: string[]
                 status: string
                 createdAt: string
                 updatedAt: string
@@ -12606,11 +12744,6 @@ export interface paths {
               year?: number
             }[]
             subjectIds?: string[]
-            classAssignments?: {
-              classId: string
-              sectionId?: string
-            }[]
-            batchIds?: string[]
             /** @enum {string} */
             status?: 'active' | 'left'
           }
@@ -12642,12 +12775,6 @@ export interface paths {
                   year: number | null
                 }[]
                 subjectIds: string[]
-                classAssignments: {
-                  id: string
-                  classId: string
-                  sectionId: string | null
-                }[]
-                batchIds: string[]
                 status: string
                 createdAt: string
                 updatedAt: string
@@ -12786,7 +12913,7 @@ export interface paths {
               data: {
                 userId: string
                 name: string
-                phone: string
+                email: string
                 portal: string
                 temporaryPassword: string
               }
@@ -13189,10 +13316,12 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List the period schedule of every campus */
+    /** List period schedules, optionally for one campus */
     get: {
       parameters: {
-        query?: never
+        query?: {
+          branchId?: string
+        }
         header?: never
         path?: never
         cookie?: never
@@ -13209,6 +13338,7 @@ export interface paths {
               data: {
                 id: string
                 branchId: string
+                name: string
                 teachingDays: string[]
                 periods: {
                   id: string
@@ -13217,6 +13347,17 @@ export interface paths {
                   startMinute: number
                   endMinute: number
                   isBreak: boolean
+                }[]
+                dayOverrides: {
+                  day: string
+                  periods: {
+                    id: string
+                    number: number
+                    name: string | null
+                    startMinute: number
+                    endMinute: number
+                    isBreak: boolean
+                  }[]
                 }[]
                 createdAt: string
                 updatedAt: string
@@ -13262,8 +13403,9 @@ export interface paths {
         }
       }
     }
-    /** Create or replace a campus's period schedule */
-    put: {
+    put?: never
+    /** Create a named period schedule on a campus */
+    post: {
       parameters: {
         query?: never
         header?: never
@@ -13273,7 +13415,7 @@ export interface paths {
       requestBody?: {
         content: {
           'application/json': {
-            branchId: string
+            name: string
             teachingDays: (
               'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
             )[]
@@ -13284,6 +13426,311 @@ export interface paths {
               endMinute: number
               /** @default false */
               isBreak?: boolean
+            }[]
+            /** @default [] */
+            dayOverrides?: {
+              /** @enum {string} */
+              day:
+                'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+              periods: {
+                number: number
+                name?: string
+                startMinute: number
+                endMinute: number
+                /** @default false */
+                isBreak?: boolean
+              }[]
+            }[]
+            branchId: string
+          }
+        }
+      }
+      responses: {
+        /** @description Period schedule created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                teachingDays: string[]
+                periods: {
+                  id: string
+                  number: number
+                  name: string | null
+                  startMinute: number
+                  endMinute: number
+                  isBreak: boolean
+                }[]
+                dayOverrides: {
+                  day: string
+                  periods: {
+                    id: string
+                    number: number
+                    name: string | null
+                    startMinute: number
+                    endMinute: number
+                    isBreak: boolean
+                  }[]
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/period-templates/{templateId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get one period schedule */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          templateId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Period schedule */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                name: string
+                teachingDays: string[]
+                periods: {
+                  id: string
+                  number: number
+                  name: string | null
+                  startMinute: number
+                  endMinute: number
+                  isBreak: boolean
+                }[]
+                dayOverrides: {
+                  day: string
+                  periods: {
+                    id: string
+                    number: number
+                    name: string | null
+                    startMinute: number
+                    endMinute: number
+                    isBreak: boolean
+                  }[]
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    /** Replace a period schedule; refused if timetables would lose a period or clash */
+    put: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          templateId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            name: string
+            teachingDays: (
+              'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+            )[]
+            periods: {
+              number: number
+              name?: string
+              startMinute: number
+              endMinute: number
+              /** @default false */
+              isBreak?: boolean
+            }[]
+            /** @default [] */
+            dayOverrides?: {
+              /** @enum {string} */
+              day:
+                'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+              periods: {
+                number: number
+                name?: string
+                startMinute: number
+                endMinute: number
+                /** @default false */
+                isBreak?: boolean
+              }[]
             }[]
           }
         }
@@ -13299,6 +13746,7 @@ export interface paths {
               data: {
                 id: string
                 branchId: string
+                name: string
                 teachingDays: string[]
                 periods: {
                   id: string
@@ -13307,6 +13755,17 @@ export interface paths {
                   startMinute: number
                   endMinute: number
                   isBreak: boolean
+                }[]
+                dayOverrides: {
+                  day: string
+                  periods: {
+                    id: string
+                    number: number
+                    name: string | null
+                    startMinute: number
+                    endMinute: number
+                    isBreak: boolean
+                  }[]
                 }[]
                 createdAt: string
                 updatedAt: string
@@ -13407,55 +13866,24 @@ export interface paths {
       }
     }
     post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/period-templates/{branchId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get one campus's period schedule */
-    get: {
+    /** Delete a period schedule nothing uses */
+    delete: {
       parameters: {
         query?: never
         header?: never
         path: {
-          branchId: string
+          templateId: string
         }
         cookie?: never
       }
       requestBody?: never
       responses: {
-        /** @description Period schedule */
-        200: {
+        /** @description Period schedule deleted */
+        204: {
           headers: {
             [name: string]: unknown
           }
-          content: {
-            'application/json': {
-              data: {
-                id: string
-                branchId: string
-                teachingDays: string[]
-                periods: {
-                  id: string
-                  number: number
-                  name: string | null
-                  startMinute: number
-                  endMinute: number
-                  isBreak: boolean
-                }[]
-                createdAt: string
-                updatedAt: string
-              }
-            }
-          }
+          content?: never
         }
         /** @description Not authenticated */
         401: {
@@ -13511,11 +13939,26 @@ export interface paths {
             }
           }
         }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
       }
     }
-    put?: never
-    post?: never
-    delete?: never
     options?: never
     head?: never
     patch?: never
@@ -13552,8 +13995,12 @@ export interface paths {
                 timetableName: string
                 day: string
                 periodNumber: number
+                startMinute: number | null
+                endMinute: number | null
                 subjectId: string
+                subjectName: string | null
                 teacherId: string
+                teacherName: string | null
                 room: string | null
                 classId: string | null
                 sectionId: string | null
@@ -13659,8 +14106,12 @@ export interface paths {
                 timetableName: string
                 day: string
                 periodNumber: number
+                startMinute: number | null
+                endMinute: number | null
                 subjectId: string
+                subjectName: string | null
                 teacherId: string
+                teacherName: string | null
                 room: string | null
                 classId: string | null
                 sectionId: string | null
@@ -13769,6 +14220,7 @@ export interface paths {
                 classId: string | null
                 sectionId: string | null
                 batchId: string | null
+                periodTemplateId: string
                 name: string
                 status: string
                 publishedAt: string | null
@@ -13862,6 +14314,7 @@ export interface paths {
                 classId: string | null
                 sectionId: string | null
                 batchId: string | null
+                periodTemplateId: string
                 name: string
                 status: string
                 publishedAt: string | null
@@ -14012,6 +14465,7 @@ export interface paths {
                 classId: string | null
                 sectionId: string | null
                 batchId: string | null
+                periodTemplateId: string
                 name: string
                 status: string
                 publishedAt: string | null
@@ -14126,6 +14580,7 @@ export interface paths {
                 classId: string | null
                 sectionId: string | null
                 batchId: string | null
+                periodTemplateId: string
                 name: string
                 status: string
                 publishedAt: string | null
@@ -14239,6 +14694,369 @@ export interface paths {
     }
     trace?: never
   }
+  '/v1/timetables/{timetableId}/slots/{slotId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Remove a period from a timetable */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+          slotId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Period removed */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /** Move a period to another day or period; checked like a new period */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+          slotId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            /** @enum {string} */
+            day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+            periodNumber: number
+          }
+        }
+      }
+      responses: {
+        /** @description Period moved */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                branchId: string
+                academicYearId: string
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                periodTemplateId: string
+                name: string
+                status: string
+                publishedAt: string | null
+                slots: {
+                  id: string
+                  timetableId: string
+                  branchId: string
+                  day: string
+                  periodNumber: number
+                  subjectId: string
+                  teacherId: string
+                  room: string | null
+                }[]
+                createdAt: string
+                updatedAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/timetables/{timetableId}/allocations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** The subject and teacher allocations a period in this timetable can use */
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          timetableId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Allocations covering this timetable */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                /** @enum {string} */
+                role: 'subject' | 'class_teacher'
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string | null
+                subjectName: string | null
+                teacherId: string
+                teacherName: string | null
+                label: string | null
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/v1/timetables/{timetableId}/slots': {
     parameters: {
       query?: never
@@ -14264,8 +15082,7 @@ export interface paths {
             /** @enum {string} */
             day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
             periodNumber: number
-            subjectId: string
-            teacherId: string
+            allocationId: string
             room?: string
           }
         }
@@ -14285,6 +15102,7 @@ export interface paths {
                 classId: string | null
                 sectionId: string | null
                 batchId: string | null
+                periodTemplateId: string
                 name: string
                 status: string
                 publishedAt: string | null
@@ -14402,7 +15220,240 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/v1/timetables/{timetableId}/slots/{slotId}': {
+  '/v1/teaching-allocations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Who teaches what, filtered by year, class, batch or teacher */
+    get: {
+      parameters: {
+        query?: {
+          academicYearId?: string
+          classId?: string
+          batchId?: string
+          teacherId?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Allocations */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                /** @enum {string} */
+                role: 'subject' | 'class_teacher'
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string | null
+                subjectName: string | null
+                teacherId: string
+                teacherName: string | null
+                label: string | null
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Allocate a subject teacher or a class teacher for an academic year */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            academicYearId: string
+            /** @enum {string} */
+            role: 'subject' | 'class_teacher'
+            classId?: string
+            sectionId?: string
+            batchId?: string
+            subjectId?: string
+            teacherId: string
+            label?: string
+          }
+        }
+      }
+      responses: {
+        /** @description Allocation created */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                academicYearId: string
+                /** @enum {string} */
+                role: 'subject' | 'class_teacher'
+                classId: string | null
+                sectionId: string | null
+                batchId: string | null
+                subjectId: string | null
+                subjectName: string | null
+                teacherId: string
+                teacherName: string | null
+                label: string | null
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/teaching-allocations/{allocationId}': {
     parameters: {
       query?: never
       header?: never
@@ -14412,20 +15463,19 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Remove a period from a timetable */
+    /** Remove an allocation no timetable period still uses */
     delete: {
       parameters: {
         query?: never
         header?: never
         path: {
-          timetableId: string
-          slotId: string
+          allocationId: string
         }
         cookie?: never
       }
       requestBody?: never
       responses: {
-        /** @description Period removed */
+        /** @description Allocation removed */
         204: {
           headers: {
             [name: string]: unknown
@@ -14470,6 +15520,24 @@ export interface paths {
         }
         /** @description Not found */
         404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Conflict with the current state */
+        409: {
           headers: {
             [name: string]: unknown
           }
@@ -15327,6 +16395,592 @@ export interface paths {
         }
       }
     }
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/discipline-incidents': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** One student's behaviour incidents, newest first. Staff only */
+    get: {
+      parameters: {
+        query: {
+          studentId: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Incidents */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                occurredOn: string
+                /** @enum {string} */
+                category:
+                  | 'disruptive-behaviour'
+                  | 'bullying'
+                  | 'fighting'
+                  | 'late-or-absent'
+                  | 'uniform'
+                  | 'academic-dishonesty'
+                  | 'property-damage'
+                  | 'other'
+                description: string
+                actionTaken: string | null
+                recordedByName: string | null
+                sharedWithParents: boolean
+                createdAt: string
+              }[]
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    /** Record a behaviour incident against a student */
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            studentId: string
+            /** Format: date-time */
+            occurredOn: string | null
+            /** @enum {string} */
+            category:
+              | 'disruptive-behaviour'
+              | 'bullying'
+              | 'fighting'
+              | 'late-or-absent'
+              | 'uniform'
+              | 'academic-dishonesty'
+              | 'property-damage'
+              | 'other'
+            description: string
+            actionTaken?: string
+            /** @default false */
+            sharedWithParents?: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Incident recorded */
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                occurredOn: string
+                /** @enum {string} */
+                category:
+                  | 'disruptive-behaviour'
+                  | 'bullying'
+                  | 'fighting'
+                  | 'late-or-absent'
+                  | 'uniform'
+                  | 'academic-dishonesty'
+                  | 'property-damage'
+                  | 'other'
+                description: string
+                actionTaken: string | null
+                recordedByName: string | null
+                sharedWithParents: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/v1/discipline-incidents/{incidentId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete an incident recorded in error */
+    delete: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          incidentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Incident deleted */
+        204: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    options?: never
+    head?: never
+    /** Share an incident with the student’s parents, or stop sharing it */
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          incidentId: string
+        }
+        cookie?: never
+      }
+      requestBody?: {
+        content: {
+          'application/json': {
+            sharedWithParents: boolean
+          }
+        }
+      }
+      responses: {
+        /** @description Incident updated */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                studentId: string
+                occurredOn: string
+                /** @enum {string} */
+                category:
+                  | 'disruptive-behaviour'
+                  | 'bullying'
+                  | 'fighting'
+                  | 'late-or-absent'
+                  | 'uniform'
+                  | 'academic-dishonesty'
+                  | 'property-damage'
+                  | 'other'
+                description: string
+                actionTaken: string | null
+                recordedByName: string | null
+                sharedWithParents: boolean
+                createdAt: string
+              }
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    trace?: never
+  }
+  '/v1/discipline-incidents/shared': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Incidents the school shared with a child’s parents. Parents only */
+    get: {
+      parameters: {
+        query: {
+          studentId: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        /** @description Shared incidents */
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              data: {
+                id: string
+                occurredOn: string
+                /** @enum {string} */
+                category:
+                  | 'disruptive-behaviour'
+                  | 'bullying'
+                  | 'fighting'
+                  | 'late-or-absent'
+                  | 'uniform'
+                  | 'academic-dishonesty'
+                  | 'property-damage'
+                  | 'other'
+                description: string
+                actionTaken: string | null
+              }[]
+            }
+          }
+        }
+        /** @description Validation failed or the code is invalid */
+        400: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not authenticated */
+        401: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+        /** @description Not permitted, or the account or school is suspended */
+        403: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': {
+              error: {
+                code: string
+                message: string
+                requestId?: string
+                fieldErrors?: {
+                  [key: string]: string[]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
     options?: never
     head?: never
     patch?: never

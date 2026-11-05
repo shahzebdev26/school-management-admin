@@ -14,6 +14,7 @@ function renderForm() {
 async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText(/School name/), 'Greenwood Academy')
   await user.type(screen.getByLabelText(/Slug/), 'greenwood-academy')
+  await user.type(screen.getByLabelText(/Admin email/), 'admin@greenwood.example')
   await user.type(screen.getByLabelText(/Contact person/), 'Ayesha Khan')
   await user.type(screen.getByLabelText(/Phone/), '03001234567')
   await user.type(screen.getByLabelText(/Address/), '12 Model Town, Lahore')
@@ -27,7 +28,7 @@ function mockCreated(overrides: Record<string, unknown> = {}) {
           data: {
             id: 'school-1',
             adminCredentials: {
-              phone: '+923001234567',
+              email: 'admin@greenwood.example',
               temporaryPassword: 'temp-pass-abc123',
             },
             ...overrides,
@@ -48,6 +49,7 @@ describe('CreateSchoolForm validation', () => {
 
     expect(await screen.findByText('School name is required')).toBeVisible()
     expect(screen.getByText('Slug is required')).toBeVisible()
+    expect(screen.getByText('Enter a valid email address')).toBeVisible()
     expect(screen.getByText('Contact person is required')).toBeVisible()
     expect(screen.getByText('Phone number is required')).toBeVisible()
     expect(screen.getByText('Address is required')).toBeVisible()
@@ -101,7 +103,7 @@ describe('CreateSchoolForm submission', () => {
           {
             data: {
               id: 'school-1',
-              adminCredentials: { phone: '+923001234567', temporaryPassword: 'x' },
+              adminCredentials: { email: 'admin@greenwood.example', temporaryPassword: 'x' },
             },
           },
           { status: 201 },
@@ -121,6 +123,7 @@ describe('CreateSchoolForm submission', () => {
       name: 'Greenwood Academy',
       slug: 'greenwood-academy',
       type: 'school',
+      adminEmail: 'admin@greenwood.example',
       phone: '+923001234567',
     })
   })
@@ -136,7 +139,7 @@ describe('CreateSchoolForm submission', () => {
     const dialog = await screen.findByRole('dialog')
     expect(within(dialog).getByText('School Created')).toBeVisible()
     expect(within(dialog).getByText(/will not be shown again/)).toBeVisible()
-    expect(within(dialog).getByText('+923001234567')).toBeVisible()
+    expect(within(dialog).getByText('admin@greenwood.example')).toBeVisible()
     expect(within(dialog).getByText('temp-pass-abc123')).toBeVisible()
   })
 
@@ -157,7 +160,7 @@ describe('CreateSchoolForm submission', () => {
 
     await vi.waitFor(async () => {
       expect(await navigator.clipboard.readText()).toBe(
-        'Phone: +923001234567\nPassword: temp-pass-abc123',
+        'Email: admin@greenwood.example\nPassword: temp-pass-abc123',
       )
     })
   })

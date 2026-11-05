@@ -9,8 +9,6 @@ public/sw.js
 next-env.d.ts
 *.tsbuildinfo
 
-.env
-.env.*
 !.env.example
 
 *.log
@@ -20,7 +18,7 @@ npm-debug.log*
 Thumbs.db
 
 .idea/
-.vscode/*
 !.vscode/extensions.json
 
 .vercel
+config.bat

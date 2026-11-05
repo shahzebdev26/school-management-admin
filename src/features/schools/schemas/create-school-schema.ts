@@ -9,6 +9,7 @@ export const createSchoolSchema = z.object({
     .max(50)
     .regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
   type: z.enum(['school', 'coaching', 'tuition'], { message: 'Type is required' }),
+  adminEmail: z.email('Enter a valid email address'),
   contactPerson: z.string().min(1, 'Contact person is required').max(100),
   phone: z
     .string()
